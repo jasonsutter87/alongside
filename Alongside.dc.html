@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesque:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;}
+  button{font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .12s ease, background .18s ease, box-shadow .18s ease, border-color .18s ease;}
+  button:active{transform:scale(0.985);}
+  textarea{font-family:inherit;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes popIn{0%{opacity:0;transform:scale(0.6) translateY(4px);}60%{transform:scale(1.08);}100%{opacity:1;transform:scale(1) translateY(0);}}
+  @keyframes msgIn{from{opacity:0;transform:translateY(8px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+  @keyframes blink{0%,80%,100%{opacity:0.25;}40%{opacity:1;}}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center;padding:32px;background:radial-gradient(120% 90% at 50% 18%, #F4E8D7 0%, #ECDCC6 58%, #E3D0B8 100%);font-family:'Hanken Grotesque',sans-serif;">
+
+  <!-- ───────────── REVIEW JUMP-NAV (outside the phone) ───────────── -->
+  <div style="position:fixed;top:16px;left:16px;z-index:9999;font-family:'Hanken Grotesque',sans-serif;background:rgba(255,251,244,0.94);backdrop-filter:blur(8px);border:1px solid rgba(59,45,38,0.1);border-radius:15px;padding:13px 11px 14px;box-shadow:0 10px 30px rgba(59,45,38,0.14);width:186px;max-height:calc(100vh - 32px);overflow:auto;">
+    <div style="font:600 9px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#B98E5E;margin:2px 0 4px 5px;">Jump to screen</div>
+    <sc-for list="{{ navSections }}" as="sec" hint-placeholder-count="5">
+      <div style="font:600 8.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.3px;text-transform:uppercase;color:#C8B49C;margin:12px 0 4px 6px;">{{ sec.title }}</div>
+      <sc-for list="{{ sec.items }}" as="nv" hint-placeholder-count="3">
+        <sc-if value="{{ nv.active }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ nv.onClick }}" style="display:flex;align-items:center;width:100%;text-align:left;border:none;cursor:pointer;background:#3B2D26;color:#F6EEE3;font:600 12.5px/1.2 'Hanken Grotesque',sans-serif;padding:7px 9px;border-radius:9px;margin-bottom:1px;">{{ nv.label }}</button>
+        </sc-if>
+        <sc-if value="{{ nv.inactive }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ nv.onClick }}" style="display:flex;align-items:center;width:100%;text-align:left;border:none;cursor:pointer;background:transparent;color:#6E5B50;font:500 12.5px/1.2 'Hanken Grotesque',sans-serif;padding:7px 9px;border-radius:9px;margin-bottom:1px;" style-hover="background:rgba(59,45,38,0.05);">{{ nv.label }}</button>
+        </sc-if>
+      </sc-for>
+    </sc-for>
+  </div>
+
+<x-import component="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+
+  <!-- ───────────────────────── 1 · WELCOME ───────────────────────── -->
+  <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ true }}">
+  <div style="height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;padding:78px 32px 44px;background:linear-gradient(180deg,#F6EEE3 0%,#F0E2D0 100%);">
+    <div style="font:600 12px/1 'Hanken Grotesque',sans-serif;letter-spacing:5px;text-transform:uppercase;color:#B98E5E;">alongside</div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;">
+      <div style="position:relative;width:104px;height:104px;animation:floaty 6s ease-in-out infinite;">
+        <div style="position:absolute;left:0;top:8px;width:74px;height:74px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#D9A441);box-shadow:0 12px 26px rgba(126,140,106,0.32);border:3px solid #F6EEE3;"></div>
+        <div style="position:absolute;right:0;top:8px;width:74px;height:74px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);box-shadow:0 12px 26px rgba(222,111,86,0.32);border:3px solid #F6EEE3;"></div>
+      </div>
+      <div>
+        <h1 style="margin:0;font:500 33px/1.16 'Newsreader',serif;color:#3B2D26;letter-spacing:-0.4px;">Connection isn't<br>something you swipe&nbsp;for.</h1>
+        <p style="margin:20px auto 0;max-width:296px;font:400 16px/1.62 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">It's something you <span style="font:italic 400 17px/1 'Newsreader',serif;color:#3B2D26;">make</span> — by doing something together. So that's what we'll do.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px;align-items:flex-start;">
+        <div style="display:flex;align-items:center;gap:10px;font:500 14px/1.2 'Hanken Grotesque',sans-serif;color:#7A6A5D;"><span style="width:7px;height:7px;border-radius:50%;background:#7E8C6A;"></span>No endless feed to fall into</div>
+        <div style="display:flex;align-items:center;gap:10px;font:500 14px/1.2 'Hanken Grotesque',sans-serif;color:#7A6A5D;"><span style="width:7px;height:7px;border-radius:50%;background:#D9A441;"></span>No rating faces in half a second</div>
+        <div style="display:flex;align-items:center;gap:10px;font:500 14px/1.2 'Hanken Grotesque',sans-serif;color:#7A6A5D;"><span style="width:7px;height:7px;border-radius:50%;background:#DE6F56;"></span>Just a few good people, and something to do</div>
+      </div>
+    </div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:13px;align-items:center;">
+      <button onClick="{{ comeIn }}" style="width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 17px/1 'Hanken Grotesque',sans-serif;padding:18px;border-radius:18px;box-shadow:0 12px 26px rgba(222,111,86,0.34);" style-hover="background:#D5634A;box-shadow:0 14px 30px rgba(222,111,86,0.42);">Come in</button>
+      <div style="font:400 12.5px/1 'Hanken Grotesque',sans-serif;color:#B6A493;">Already a member? Sign in</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 2 · INTENT ───────────────────────── -->
+  <sc-if value="{{ isIntent }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;padding:66px 26px 30px;background:#F6EEE3;">
+    <div style="font:600 12px/1 'Hanken Grotesque',sans-serif;letter-spacing:4px;text-transform:uppercase;color:#B98E5E;">alongside</div>
+    <div style="margin-top:28px;">
+      <h1 style="margin:0;font:500 30px/1.16 'Newsreader',serif;color:#3B2D26;">What brings you<br>here?</h1>
+      <p style="margin:14px 0 0;font:400 15px/1.55 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Switch anytime. We keep the two worlds completely separate — no blurred lines, ever.</p>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;">
+      <button onClick="{{ chooseDating }}" style="text-align:left;cursor:pointer;background:{{ datingBg }};border:{{ datingBorder }};border-radius:22px;padding:22px 22px;display:flex;flex-direction:column;gap:7px;box-shadow:0 5px 16px rgba(222,111,86,0.1);">
+        <div style="display:flex;align-items:center;gap:11px;"><span style="width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);flex:none;"></span><span style="font:500 22px/1 'Newsreader',serif;color:#7A3D2C;">Dating</span></div>
+        <span style="font:400 14px/1.5 'Hanken Grotesque',sans-serif;color:#8A6B5C;text-wrap:pretty;">Intentional, and real. For a relationship — not a roster. Never a hookup app.</span>
+      </button>
+      <button onClick="{{ chooseFriends }}" style="text-align:left;cursor:pointer;background:{{ friendsBg }};border:{{ friendsBorder }};border-radius:22px;padding:22px 22px;display:flex;flex-direction:column;gap:7px;box-shadow:0 5px 16px rgba(126,140,106,0.12);">
+        <div style="display:flex;align-items:center;gap:11px;"><span style="width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#7E8C6A);flex:none;"></span><span style="font:500 22px/1 'Newsreader',serif;color:#43512F;">Friends &amp; clubs</span></div>
+        <span style="font:400 14px/1.5 'Hanken Grotesque',sans-serif;color:#5E6B4E;text-wrap:pretty;">People to actually do things with — a running group, a climbing partner, a Sunday hiking crew.</span>
+      </button>
+    </div>
+    <button onClick="{{ toTiny }}" style="width:100%;border:none;cursor:pointer;background:{{ intentCtaBg }};color:{{ intentCtaColor }};font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;">{{ intentCtaLabel }}</button>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 3 · TINY ONBOARDING ───────────────────────── -->
+  <sc-if value="{{ isTiny }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;padding:66px 26px 30px;background:#F6EEE3;">
+    <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#B98E5E;">Just the basics</div>
+    <div style="margin-top:14px;">
+      <h1 style="margin:0;font:500 29px/1.18 'Newsreader',serif;color:#3B2D26;">First, barely<br>anything.</h1>
+      <p style="margin:13px 0 0;font:400 15px/1.55 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Just enough to show you how this works. The real questions come after — once you've actually had some fun. Promise.</p>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:11px;">
+      <div style="display:flex;flex-direction:column;gap:5px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#B6A493;">First name</span><div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.12);border-radius:14px;padding:14px 16px;font:500 16px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Alex</div></div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#B6A493;">Age</span><div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.12);border-radius:14px;padding:14px 16px;font:500 16px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">34</div></div>
+        <div style="flex:2;display:flex;flex-direction:column;gap:5px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#B6A493;">City</span><div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.12);border-radius:14px;padding:14px 16px;font:500 16px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Portland, OR</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#B6A493;">Here for</span><div style="background:#F7DDD3;border:1px solid rgba(222,111,86,0.25);border-radius:14px;padding:14px 16px;font:500 16px/1 'Hanken Grotesque',sans-serif;color:#7A3D2C;">{{ intentLabel }}</div></div>
+    </div>
+    <button onClick="{{ toDemo }}" style="width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;box-shadow:0 10px 22px rgba(222,111,86,0.3);" style-hover="background:#D5634A;">Try a quick round  →</button>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 4 · DEMO ACTIVITY ───────────────────────── -->
+  <sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;padding:54px 22px 26px;background:#F6EEE3;">
+    <div style="display:flex;align-items:center;gap:10px;background:#FCF7EF;border:1px solid rgba(59,45,38,0.08);border-radius:14px;padding:11px 13px;">
+      <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#D9A441);flex:none;"></div>
+      <div style="font:500 12.5px/1.42 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">A quick taste with <b style="color:#3B2D26;">Sam</b>, a demo partner. This is how every match begins.</div>
+    </div>
+
+    <sc-if value="{{ demoPlaying }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px;">
+        <div style="font:600 12px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#B98E5E;">{{ demoNum }}</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <sc-for list="{{ demoDots }}" as="dot" hint-placeholder-count="2"><div style="width:7px;height:7px;border-radius:50%;background:{{ dot.color }};"></div></sc-for>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;">
+        <div style="text-align:center;margin-bottom:20px;"><div style="font:italic 400 21px/1 'Newsreader',serif;color:#C98A3C;">Would you rather…</div></div>
+        <button onClick="{{ demoPickA }}" style="position:relative;text-align:left;border:none;cursor:pointer;background:#F7DDD3;border-radius:22px;padding:24px 22px;min-height:112px;display:flex;align-items:center;box-shadow:0 5px 16px rgba(222,111,86,0.13);" style-hover="box-shadow:0 8px 22px rgba(222,111,86,0.22);">
+          <span style="font:500 20px/1.3 'Newsreader',serif;color:#7A3D2C;text-wrap:pretty;">{{ demoOptA }}</span>
+          <sc-if value="{{ demoPickedA }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;border-radius:22px;border:3px solid #DE6F56;pointer-events:none;"></div><div style="position:absolute;top:-11px;left:18px;background:#DE6F56;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .35s ease both;">YOU</div></sc-if>
+          <sc-if value="{{ demoSamA }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-11px;right:18px;background:#7E8C6A;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .4s ease both;">SAM</div></sc-if>
+        </button>
+        <div style="display:flex;justify-content:center;align-items:center;margin:-14px 0;position:relative;z-index:2;"><div style="width:42px;height:42px;border-radius:50%;background:#F6EEE3;border:1px solid rgba(59,45,38,0.08);display:flex;align-items:center;justify-content:center;font:italic 400 15px/1 'Newsreader',serif;color:#9A8576;box-shadow:0 2px 7px rgba(59,45,38,0.07);">or</div></div>
+        <button onClick="{{ demoPickB }}" style="position:relative;text-align:left;border:none;cursor:pointer;background:#E4E9D8;border-radius:22px;padding:24px 22px;min-height:112px;display:flex;align-items:center;box-shadow:0 5px 16px rgba(126,140,106,0.15);" style-hover="box-shadow:0 8px 22px rgba(126,140,106,0.24);">
+          <span style="font:500 20px/1.3 'Newsreader',serif;color:#43512F;text-wrap:pretty;">{{ demoOptB }}</span>
+          <sc-if value="{{ demoPickedB }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;border-radius:22px;border:3px solid #DE6F56;pointer-events:none;"></div><div style="position:absolute;top:-11px;left:18px;background:#DE6F56;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .35s ease both;">YOU</div></sc-if>
+          <sc-if value="{{ demoSamB }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-11px;right:18px;background:#7E8C6A;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .4s ease both;">SAM</div></sc-if>
+        </button>
+      </div>
+      <div style="min-height:96px;display:flex;flex-direction:column;justify-content:flex-end;gap:11px;">
+        <sc-if value="{{ demoThinking }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:center;gap:9px;color:#9A8576;font:500 14px/1 'Hanken Grotesque',sans-serif;animation:fadeUp .3s ease both;"><span>Sam is choosing</span><span style="display:inline-flex;gap:3px;"><span style="width:5px;height:5px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite 0s;"></span><span style="width:5px;height:5px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite .2s;"></span><span style="width:5px;height:5px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite .4s;"></span></span></div></sc-if>
+        <sc-if value="{{ demoRevealed }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;font:400 15px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;background:#FCF7EF;border:1px solid rgba(59,45,38,0.07);padding:13px 16px;border-radius:16px;text-wrap:pretty;animation:fadeUp .45s ease both;">{{ demoCaption }}</div><button onClick="{{ demoNext }}" style="width:100%;border:none;cursor:pointer;background:#3B2D26;color:#F6EEE3;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:16px;border-radius:16px;animation:fadeUp .5s ease both;" style-hover="background:#2C211B;">{{ demoNextLabel }}</button></sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ demoDone }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:22px;">
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);box-shadow:0 12px 26px rgba(222,111,86,0.3);animation:popIn .5s ease both;"></div>
+        <div>
+          <h1 style="margin:0;font:500 29px/1.18 'Newsreader',serif;color:#3B2D26;">That's the whole<br>idea.</h1>
+          <p style="margin:16px auto 0;max-width:296px;font:400 15.5px/1.6 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">No interview. No <span style="font:italic 400 16px/1 'Newsreader',serif;color:#3B2D26;">“so what do you do.”</span> You just learned more about Sam in under a minute than a week of texting would tell you.</p>
+          <p style="margin:13px auto 0;max-width:296px;font:400 15.5px/1.6 'Hanken Grotesque',sans-serif;color:#6E5B50;">Every real match starts exactly here.</p>
+        </div>
+      </div>
+      <button onClick="{{ toDeep }}" style="width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;box-shadow:0 10px 22px rgba(222,111,86,0.3);" style-hover="background:#D5634A;">Now make it yours  →</button>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 5 · DEEP ONBOARDING ───────────────────────── -->
+  <sc-if value="{{ isDeep }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;padding:54px 24px 26px;background:#F6EEE3;">
+    <div style="display:flex;align-items:center;gap:13px;">
+      <button onClick="{{ deepBack }}" style="border:none;background:none;cursor:pointer;padding:0;color:#9A8576;font:300 30px/1 'Hanken Grotesque',sans-serif;flex:none;">‹</button>
+      <div style="flex:1;display:flex;gap:5px;">
+        <sc-for list="{{ segs }}" as="seg" hint-placeholder-count="5"><div style="flex:1;height:4px;border-radius:3px;background:{{ seg.bg }};"></div></sc-for>
+      </div>
+    </div>
+    <div style="margin-top:9px;font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:#B98E5E;">{{ deepProgress }}</div>
+    <div style="margin-top:18px;">
+      <h1 style="margin:0;font:500 26px/1.2 'Newsreader',serif;color:#3B2D26;text-wrap:pretty;">{{ deepTitle }}</h1>
+      <p style="margin:11px 0 0;font:400 15px/1.55 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">{{ deepSub }}</p>
+    </div>
+    <div style="flex:1;overflow:auto;margin-top:20px;">
+      <sc-if value="{{ isCloud }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <sc-for list="{{ deepOptions }}" as="opt" hint-placeholder-count="8"><button onClick="{{ opt.onClick }}" style="cursor:pointer;border:{{ opt.border }};background:{{ opt.bg }};color:{{ opt.color }};font:500 15px/1 'Hanken Grotesque',sans-serif;padding:12px 17px;border-radius:30px;">{{ opt.label }}</button></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isStack }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:11px;">
+          <sc-for list="{{ deepOptions }}" as="opt" hint-placeholder-count="3"><button onClick="{{ opt.onClick }}" style="text-align:left;cursor:pointer;border:{{ opt.border }};background:{{ opt.bg }};width:100%;padding:15px 17px;border-radius:16px;display:flex;flex-direction:column;gap:3px;"><span style="font:600 16px/1.25 'Hanken Grotesque',sans-serif;color:{{ opt.color }};">{{ opt.label }}</span><sc-if value="{{ opt.hasSub }}" hint-placeholder-val="{{ false }}"><span style="font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#9A8576;">{{ opt.sub }}</span></sc-if></button></sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isTextStep }}" hint-placeholder-val="{{ false }}">
+        <textarea defaultValue="{{ deepText }}" rows="5" style="width:100%;resize:none;border:1px solid rgba(59,45,38,0.14);background:#FFFBF4;border-radius:16px;padding:15px 16px;font:400 16px/1.55 'Hanken Grotesque',sans-serif;color:#3B2D26;outline:none;"></textarea>
+        <div style="margin-top:9px;font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#B6A493;">Say it how you'd say it out loud. We read these.</div>
+      </sc-if>
+      <sc-if value="{{ hasFootnote }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:16px;display:flex;gap:10px;align-items:flex-start;background:#EFE7D8;border-radius:14px;padding:13px 14px;"><span style="width:8px;height:8px;border-radius:50%;background:#7E8C6A;margin-top:5px;flex:none;"></span><span style="font:400 13px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">{{ deepFootnote }}</span></div>
+      </sc-if>
+    </div>
+    <button onClick="{{ deepNextAction }}" style="width:100%;border:none;cursor:pointer;background:{{ deepNextBg }};color:{{ deepNextColor }};font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;margin-top:14px;">{{ deepNextLabel }}</button>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 6 · WHO'S WAITING ───────────────────────── -->
+  <sc-if value="{{ isWaiting }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;padding:58px 24px 26px;background:#F6EEE3;">
+    <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#B98E5E;">While you were answering…</div>
+    <h1 style="margin:11px 0 0;font:500 27px/1.18 'Newsreader',serif;color:#3B2D26;text-wrap:pretty;">People who overlap with you are already here.</h1>
+    <div style="display:flex;align-items:center;margin-top:20px;">
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);filter:blur(5px);border:3px solid #F6EEE3;"></div>
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#7E8C6A);filter:blur(5px);border:3px solid #F6EEE3;margin-left:-16px;"></div>
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(140deg,#C98B7E,#D9A441);filter:blur(5px);border:3px solid #F6EEE3;margin-left:-16px;"></div>
+      <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#D9A441);filter:blur(5px);border:3px solid #F6EEE3;margin-left:-16px;"></div>
+      <div style="width:48px;height:48px;border-radius:50%;background:#EFE2CE;border:3px solid #F6EEE3;margin-left:-16px;display:flex;align-items:center;justify-content:center;font:600 14px/1 'Hanken Grotesque',sans-serif;color:#8A6B5C;">+11</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:11px;margin-top:22px;">
+      <div style="display:flex;align-items:center;gap:15px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:15px 17px;box-shadow:0 2px 9px rgba(59,45,38,0.04);"><div style="font:500 30px/1 'Newsreader',serif;color:#DE6F56;flex:none;width:42px;">14</div><div><div style="font:600 15.5px/1.3 'Hanken Grotesque',sans-serif;color:#3B2D26;">share your bookshelf</div><div style="font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#9A8576;">The same three novels you flagged.</div></div></div>
+      <div style="display:flex;align-items:center;gap:15px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:15px 17px;box-shadow:0 2px 9px rgba(59,45,38,0.04);"><div style="font:500 30px/1 'Newsreader',serif;color:#7E8C6A;flex:none;width:42px;">9</div><div><div style="font:600 15.5px/1.3 'Hanken Grotesque',sans-serif;color:#3B2D26;">are marathon-training this spring</div><div style="font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#9A8576;">Two of them within a mile of you.</div></div></div>
+      <div style="display:flex;align-items:center;gap:15px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:15px 17px;box-shadow:0 2px 9px rgba(59,45,38,0.04);"><div style="font:500 30px/1 'Newsreader',serif;color:#D9A441;flex:none;width:42px;">3</div><div><div style="font:600 15.5px/1.3 'Hanken Grotesque',sans-serif;color:#3B2D26;">flagged the exact trip you did</div><div style="font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#9A8576;">Oaxaca, 2027. What are the odds.</div></div></div>
+    </div>
+    <button onClick="{{ toBuilding }}" style="width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;box-shadow:0 10px 22px rgba(222,111,86,0.3);" style-hover="background:#D5634A;">See who they are  →</button>
+    <div style="text-align:center;margin-top:11px;font:400 12.5px/1 'Hanken Grotesque',sans-serif;color:#B6A493;">Real people. Already inside.</div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 7 · THE BUILDING (paywall) ───────────────────────── -->
+  <sc-if value="{{ isBuilding }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;padding:54px 24px 24px;background:linear-gradient(180deg,#F6EEE3,#F0E2D0);overflow:auto;">
+    <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#B98E5E;">The courtyard is free</div>
+    <h1 style="margin:9px 0 0;font:500 27px/1.18 'Newsreader',serif;color:#3B2D26;text-wrap:pretty;">The building is where it actually happens.</h1>
+    <p style="margin:12px 0 0;font:400 14.5px/1.55 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Here's exactly what's inside. No mystery, no dark patterns.</p>
+    <div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:20px;padding:17px 18px;margin-top:17px;display:flex;flex-direction:column;gap:15px;box-shadow:0 4px 14px rgba(59,45,38,0.06);">
+      <div style="display:flex;gap:12px;align-items:flex-start;"><span style="width:20px;height:20px;border-radius:50%;background:#7E8C6A;color:#fff;font:600 12px/20px 'Hanken Grotesque',sans-serif;text-align:center;flex:none;">✓</span><div><div style="font:600 15px/1.3 'Hanken Grotesque',sans-serif;color:#3B2D26;">Matches that lead with what you share</div><div style="font:400 13px/1.42 'Hanken Grotesque',sans-serif;color:#9A8576;">A few curated people — never an endless feed.</div></div></div>
+      <div style="display:flex;gap:12px;align-items:flex-start;"><span style="width:20px;height:20px;border-radius:50%;background:#7E8C6A;color:#fff;font:600 12px/20px 'Hanken Grotesque',sans-serif;text-align:center;flex:none;">✓</span><div><div style="font:600 15px/1.3 'Hanken Grotesque',sans-serif;color:#3B2D26;">The first-five-minutes activity, every time</div><div style="font:400 13px/1.42 'Hanken Grotesque',sans-serif;color:#9A8576;">You play before you ever interview.</div></div></div>
+      <div style="display:flex;gap:12px;align-items:flex-start;"><span style="width:20px;height:20px;border-radius:50%;background:#7E8C6A;color:#fff;font:600 12px/20px 'Hanken Grotesque',sans-serif;text-align:center;flex:none;">✓</span><div><div style="font:600 15px/1.3 'Hanken Grotesque',sans-serif;color:#3B2D26;">Up to 3 live connections at once</div><div style="font:400 13px/1.42 'Hanken Grotesque',sans-serif;color:#9A8576;">Kept rare on purpose, so each one matters.</div></div></div>
+      <div style="display:flex;gap:12px;align-items:flex-start;"><span style="width:20px;height:20px;border-radius:50%;background:#7E8C6A;color:#fff;font:600 12px/20px 'Hanken Grotesque',sans-serif;text-align:center;flex:none;">✓</span><div><div style="font:600 15px/1.3 'Hanken Grotesque',sans-serif;color:#3B2D26;">A nudge to actually meet — and a We Met to celebrate</div><div style="font:400 13px/1.42 'Hanken Grotesque',sans-serif;color:#9A8576;">The whole point is getting you offline.</div></div></div>
+    </div>
+    <div style="background:#EFE7D8;border-radius:16px;padding:14px 16px;margin-top:13px;font:400 13.5px/1.55 'Hanken Grotesque',sans-serif;color:#5E5046;text-wrap:pretty;">We make money when you <b style="color:#3B2D26;">leave</b> for a real date — never when you scroll. No ads. No selling your attention back to you.</div>
+    <div style="display:flex;align-items:baseline;gap:9px;margin-top:18px;"><span style="font:500 40px/1 'Newsreader',serif;color:#3B2D26;">$14</span><span style="font:500 15px/1 'Hanken Grotesque',sans-serif;color:#8A6B5C;">/ month</span><span style="margin-left:auto;background:#F7DDD3;color:#B85138;font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;padding:7px 11px;border-radius:30px;">FOUNDING RATE</span></div>
+    <button onClick="{{ enterBuilding }}" style="width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;margin-top:16px;box-shadow:0 10px 22px rgba(222,111,86,0.3);" style-hover="background:#D5634A;">Step inside  →</button>
+    <button onClick="{{ noop }}" style="border:none;background:none;cursor:pointer;color:#9A8576;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px;">Stay in the courtyard for now</button>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 8 · MATCH ───────────────────────── -->
+  <sc-if value="{{ isMatch }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;padding:60px 30px 44px;background:#F6EEE3;">
+    <div style="font:600 12px/1 'Hanken Grotesque',sans-serif;letter-spacing:4px;text-transform:uppercase;color:#B98E5E;">alongside</div>
+
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;">
+      <div style="display:flex;align-items:center;justify-content:center;animation:floaty 6s ease-in-out infinite;">
+        <div style="width:86px;height:86px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#D9A441);display:flex;align-items:center;justify-content:center;color:#FFFDF7;font:500 32px/1 'Newsreader',serif;box-shadow:0 10px 24px rgba(126,140,106,0.35);border:3px solid #F6EEE3;">M</div>
+        <div style="width:86px;height:86px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);display:flex;align-items:center;justify-content:center;color:#FFFDF7;font:600 14px/1 'Hanken Grotesque',sans-serif;letter-spacing:1px;box-shadow:0 10px 24px rgba(222,111,86,0.35);border:3px solid #F6EEE3;margin-left:-18px;">YOU</div>
+      </div>
+
+      <div>
+        <h1 style="margin:0;font:500 30px/1.12 'Newsreader',serif;color:#3B2D26;letter-spacing:-0.3px;">You and Maya<br>found each other.</h1>
+        <div style="margin:16px auto 0;max-width:308px;background:#FCF7EF;border:1px solid rgba(59,45,38,0.08);border-radius:16px;padding:13px 16px;text-align:left;">
+          <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#B98E5E;margin-bottom:7px;">Why you two</div>
+          <div style="font:400 14.5px/1.5 'Hanken Grotesque',sans-serif;color:#5E5046;text-wrap:pretty;">You both flagged <i style="font:italic 500 15px/1 'Newsreader',serif;color:#3B2D26;">Tomorrow, and Tomorrow, and Tomorrow</i> — and you're both marathon-training this spring.</div>
+        </div>
+        <p style="margin:16px auto 0;max-width:300px;font:400 15px/1.6 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Skip the cold "hi." Play one quick round first — you'll learn more in a minute than ten <span style="font:italic 400 16px/1 'Newsreader',serif;color:#3B2D26;">“so what do you do?”</span>s ever tell you.</p>
+      </div>
+    </div>
+
+    <div style="width:100%;display:flex;flex-direction:column;gap:12px;align-items:center;">
+      <button onClick="{{ startActivity }}" style="width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 17px/1 'Hanken Grotesque',sans-serif;padding:18px;border-radius:18px;box-shadow:0 12px 26px rgba(222,111,86,0.34);" style-hover="background:#D5634A;box-shadow:0 14px 30px rgba(222,111,86,0.42);">Play a round together</button>
+      <button onClick="{{ noop }}" style="border:none;background:none;cursor:pointer;color:#9A8576;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:4px;">Maybe later</button>
+      <div style="font:400 12.5px/1 'Hanken Grotesque',sans-serif;color:#B6A493;">5 quick would-you-rathers · about a minute</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 9 · ACTIVITY ───────────────────────── -->
+  <sc-if value="{{ isActivity }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;padding:60px 22px 28px;background:#F6EEE3;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="font:600 12px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:#B98E5E;">{{ roundLabel }}</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="5">
+          <div style="width:7px;height:7px;border-radius:50%;background:{{ dot.color }};"></div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div style="font:italic 400 21px/1 'Newsreader',serif;color:#C98A3C;">Would you rather…</div>
+      </div>
+      <button onClick="{{ pickA }}" style="position:relative;text-align:left;border:none;cursor:pointer;background:#F7DDD3;border-radius:22px;padding:24px 22px;min-height:116px;display:flex;align-items:center;box-shadow:0 5px 16px rgba(222,111,86,0.13);" style-hover="box-shadow:0 8px 22px rgba(222,111,86,0.22);">
+        <span style="font:500 21px/1.3 'Newsreader',serif;color:#7A3D2C;text-wrap:pretty;">{{ optA }}</span>
+        <sc-if value="{{ isPickedA }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;border-radius:22px;border:3px solid #DE6F56;pointer-events:none;"></div>
+          <div style="position:absolute;top:-11px;left:18px;background:#DE6F56;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .35s ease both;">YOU</div>
+        </sc-if>
+        <sc-if value="{{ showMayaA }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:-11px;right:18px;background:#7E8C6A;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .4s ease both;">MAYA</div>
+        </sc-if>
+      </button>
+
+      <div style="display:flex;justify-content:center;align-items:center;margin:-14px 0;position:relative;z-index:2;">
+        <div style="width:42px;height:42px;border-radius:50%;background:#F6EEE3;border:1px solid rgba(59,45,38,0.08);display:flex;align-items:center;justify-content:center;font:italic 400 15px/1 'Newsreader',serif;color:#9A8576;box-shadow:0 2px 7px rgba(59,45,38,0.07);">or</div>
+      </div>
+
+      <button onClick="{{ pickB }}" style="position:relative;text-align:left;border:none;cursor:pointer;background:#E4E9D8;border-radius:22px;padding:24px 22px;min-height:116px;display:flex;align-items:center;box-shadow:0 5px 16px rgba(126,140,106,0.15);" style-hover="box-shadow:0 8px 22px rgba(126,140,106,0.24);">
+        <span style="font:500 21px/1.3 'Newsreader',serif;color:#43512F;text-wrap:pretty;">{{ optB }}</span>
+        <sc-if value="{{ isPickedB }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;border-radius:22px;border:3px solid #DE6F56;pointer-events:none;"></div>
+          <div style="position:absolute;top:-11px;left:18px;background:#DE6F56;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .35s ease both;">YOU</div>
+        </sc-if>
+        <sc-if value="{{ showMayaB }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:-11px;right:18px;background:#7E8C6A;color:#fff;font:600 11px/1 'Hanken Grotesque',sans-serif;padding:6px 11px;border-radius:30px;letter-spacing:.6px;animation:popIn .4s ease both;">MAYA</div>
+        </sc-if>
+      </button>
+    </div>
+
+    <div style="min-height:100px;display:flex;flex-direction:column;justify-content:flex-end;gap:11px;">
+      <sc-if value="{{ isThinking }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:center;gap:9px;color:#9A8576;font:500 14px/1 'Hanken Grotesque',sans-serif;animation:fadeUp .3s ease both;">
+          <span>Maya is choosing</span>
+          <span style="display:inline-flex;gap:3px;">
+            <span style="width:5px;height:5px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite 0s;"></span>
+            <span style="width:5px;height:5px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite .2s;"></span>
+            <span style="width:5px;height:5px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite .4s;"></span>
+          </span>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isRevealed }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;font:400 15px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;background:#FCF7EF;border:1px solid rgba(59,45,38,0.07);padding:13px 16px;border-radius:16px;text-wrap:pretty;animation:fadeUp .45s ease both;">{{ reactionLine }}</div>
+        <button onClick="{{ next }}" style="width:100%;border:none;cursor:pointer;background:#3B2D26;color:#F6EEE3;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:16px;border-radius:16px;animation:fadeUp .5s ease both;" style-hover="background:#2C211B;">{{ nextLabel }}</button>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── 10 · CHAT ───────────────────────── -->
+  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6EEE3;">
+    <div style="flex:none;padding:56px 18px 13px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(59,45,38,0.07);">
+      <button onClick="{{ goMatch }}" style="border:none;background:none;cursor:pointer;padding:0 4px;color:#9A8576;font:300 30px/1 'Hanken Grotesque',sans-serif;">‹</button>
+      <div style="position:relative;width:44px;height:44px;flex:none;">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#D9A441);display:flex;align-items:center;justify-content:center;color:#FFFDF7;font:500 18px/1 'Newsreader',serif;filter:blur({{ revealBlur }});transition:filter .7s ease;">M</div>
+        <svg viewBox="0 0 36 36" style="position:absolute;inset:-3px;width:50px;height:50px;transform:rotate(-90deg);pointer-events:none;"><circle cx="18" cy="18" r="16" fill="none" stroke="rgba(126,140,106,0.18)" stroke-width="2"></circle><circle cx="18" cy="18" r="16" fill="none" stroke="#7E8C6A" stroke-width="2" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="{{ revealDash }}" style="transition:stroke-dashoffset .7s ease;"></circle></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font:600 16px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Maya</div>
+        <div style="font:500 11.5px/1.2 'Hanken Grotesque',sans-serif;color:#9A8576;display:flex;align-items:center;gap:5px;margin-top:2px;"><span style="width:6px;height:6px;border-radius:50%;background:#7E8C6A;display:inline-block;"></span>{{ revealText }}</div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:16px 16px 8px;">
+      <sc-if value="{{ showRecap }}" hint-placeholder-val="{{ true }}">
+      <div style="width:100%;background:#FCF7EF;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:14px 15px;box-shadow:0 2px 9px rgba(59,45,38,0.05);">
+        <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#B98E5E;margin-bottom:11px;">{{ recapText }}</div>
+        <div style="font:italic 400 13px/1 'Newsreader',serif;color:#C98A3C;margin-bottom:9px;">Round 3 — would you rather…</div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;background:#F7DDD3;border-radius:12px;padding:10px 12px;"><div style="font:600 10px/1 'Hanken Grotesque',sans-serif;color:#DE6F56;letter-spacing:.6px;margin-bottom:5px;">YOU</div><div style="font:500 13px/1.32 'Newsreader',serif;color:#7A3D2C;">{{ r3You }}</div></div>
+          <div style="flex:1;background:#E4E9D8;border-radius:12px;padding:10px 12px;"><div style="font:600 10px/1 'Hanken Grotesque',sans-serif;color:#7E8C6A;letter-spacing:.6px;margin-bottom:5px;">MAYA</div><div style="font:500 13px/1.32 'Newsreader',serif;color:#43512F;">{{ r3Maya }}</div></div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-for list="{{ messages }}" as="msg" hint-placeholder-count="0">
+        <sc-if value="{{ msg.notMe }}" hint-placeholder-val="{{ true }}">
+          <div style="align-self:flex-start;max-width:80%;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);color:#3B2D26;padding:12px 15px;border-radius:21px 21px 21px 7px;font:400 15px/1.46 'Hanken Grotesque',sans-serif;box-shadow:0 1px 3px rgba(59,45,38,0.05);text-wrap:pretty;animation:msgIn .4s ease both;">{{ msg.text }}</div>
+        </sc-if>
+        <sc-if value="{{ msg.isMe }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self:flex-end;max-width:80%;background:#DE6F56;color:#FFFBF4;padding:12px 15px;border-radius:21px 21px 7px 21px;font:400 15px/1.46 'Hanken Grotesque',sans-serif;box-shadow:0 3px 9px rgba(222,111,86,0.3);text-wrap:pretty;animation:msgIn .4s ease both;">{{ msg.text }}</div>
+        </sc-if>
+      </sc-for>
+
+      <sc-if value="{{ mayaTyping }}" hint-placeholder-val="{{ false }}">
+        <div style="align-self:flex-start;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);padding:14px 16px;border-radius:21px 21px 21px 7px;display:flex;gap:4px;animation:msgIn .3s ease both;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite 0s;"></span>
+          <span style="width:6px;height:6px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite .2s;"></span>
+          <span style="width:6px;height:6px;border-radius:50%;background:#C2A98F;animation:blink 1.1s infinite .4s;"></span>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="flex:none;padding:8px 14px 16px;">
+      <sc-if value="{{ readyToMeet }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ goMeet }}" style="width:100%;border:1px solid rgba(126,140,106,0.4);background:#EDF1E4;color:#43512F;cursor:pointer;font:500 13.5px/1.35 'Hanken Grotesque',sans-serif;padding:11px 13px;border-radius:14px;margin-bottom:10px;text-align:left;display:flex;align-items:center;gap:11px;" style-hover="background:#E4E9D8;"><span style="width:28px;height:28px;border-radius:50%;background:#7E8C6A;color:#fff;font:600 15px/28px 'Hanken Grotesque',sans-serif;text-align:center;flex:none;">→</span>You've been talking a while. Want to meet in person?</button>
+      </sc-if>
+      <sc-if value="{{ showSuggestions }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:11px;">
+          <sc-for list="{{ suggestions }}" as="sug" hint-placeholder-count="0">
+            <button onClick="{{ sug.onClick }}" style="border:1px solid rgba(222,111,86,0.4);background:#FCF7EF;color:#B85138;cursor:pointer;font:500 13.5px/1.2 'Hanken Grotesque',sans-serif;padding:9px 14px;border-radius:30px;" style-hover="background:#F7DDD3;">{{ sug.text }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="display:flex;align-items:center;gap:9px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.1);border-radius:26px;padding:7px 7px 7px 18px;">
+        <div style="flex:1;font:400 15px/1 'Hanken Grotesque',sans-serif;color:#B6A493;">Message Maya…</div>
+        <div style="width:38px;height:38px;border-radius:50%;background:#DE6F56;display:flex;align-items:center;justify-content:center;color:#fff;font:600 19px/1 'Hanken Grotesque',sans-serif;">↑</div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── DISCOVERY ───────────────────────── -->
+  <sc-if value="{{ isDiscovery }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6EEE3;">
+    <div style="flex:none;padding:56px 24px 12px;">
+      <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#B98E5E;">For you · Dating</div>
+      <h1 style="margin:9px 0 0;font:500 27px/1.16 'Newsreader',serif;color:#3B2D26;">A few people<br>worth meeting.</h1>
+      <p style="margin:10px 0 0;font:400 14px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Three today — chosen for what you share, not how you photograph. New faces every Thursday.</p>
+    </div>
+    <div style="flex:1;overflow:auto;padding:6px 18px 20px;display:flex;flex-direction:column;gap:13px;">
+      <sc-for list="{{ discoveryCards }}" as="c" hint-placeholder-count="3">
+        <div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:20px;padding:16px;box-shadow:0 3px 12px rgba(59,45,38,0.05);">
+          <div style="display:flex;align-items:center;gap:13px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:{{ c.grad }};filter:blur(7px);flex:none;"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font:500 19px/1.1 'Newsreader',serif;color:#3B2D26;">{{ c.name }}, {{ c.age }}</div>
+              <div style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;background:{{ c.tagBg }};color:{{ c.tagColor }};font:600 9.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:.9px;padding:5px 9px;border-radius:30px;">{{ c.tag }}</div>
+            </div>
+          </div>
+          <div style="margin-top:13px;font:400 14.5px/1.52 'Hanken Grotesque',sans-serif;color:#5E5046;text-wrap:pretty;"><b style="color:#3B2D26;font-weight:600;">{{ c.lead }}</b> {{ c.reason }}</div>
+          <button onClick="{{ c.onClick }}" style="margin-top:14px;width:100%;border:none;cursor:pointer;background:#F7DDD3;color:#B85138;font:600 15px/1 'Hanken Grotesque',sans-serif;padding:13px;border-radius:13px;" style-hover="background:#F2CDBE;">Say hello</button>
+        </div>
+      </sc-for>
+      <div style="text-align:center;padding:8px 18px 0;font:400 12.5px/1.5 'Hanken Grotesque',sans-serif;color:#B6A493;text-wrap:pretty;">That's everyone for today. We'd rather show you three you'll remember than three hundred you won't.</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── CONNECTIONS ───────────────────────── -->
+  <sc-if value="{{ isConnections }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6EEE3;">
+    <div style="flex:none;padding:56px 24px 12px;">
+      <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#B98E5E;">Your connections</div>
+      <h1 style="margin:9px 0 0;font:500 27px/1.16 'Newsreader',serif;color:#3B2D26;">Three at a time.<br>On purpose.</h1>
+      <p style="margin:10px 0 0;font:400 14px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Likes are unlimited. Living connections are kept to three — so each one gets the attention it deserves.</p>
+      <div style="margin-top:15px;display:flex;gap:7px;">
+        <div style="flex:1;height:6px;border-radius:4px;background:#DE6F56;"></div>
+        <div style="flex:1;height:6px;border-radius:4px;background:#DE6F56;"></div>
+        <div style="flex:1;height:6px;border-radius:4px;background:#DE6F56;"></div>
+      </div>
+      <div style="margin-top:7px;font:500 11.5px/1 'Hanken Grotesque',sans-serif;color:#9A8576;">3 of 3 slots full</div>
+    </div>
+    <div style="flex:1;overflow:auto;padding:8px 18px 20px;display:flex;flex-direction:column;gap:11px;">
+      <sc-for list="{{ connectionCards }}" as="c" hint-placeholder-count="3">
+        <button onClick="{{ c.onClick }}" style="text-align:left;width:100%;cursor:pointer;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:14px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 9px rgba(59,45,38,0.04);" style-hover="border-color:rgba(222,111,86,0.3);">
+          <div style="width:48px;height:48px;border-radius:50%;background:{{ c.grad }};filter:blur({{ c.blur }});display:flex;align-items:center;justify-content:center;color:#fff;font:500 17px/1 'Newsreader',serif;flex:none;">{{ c.init }}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font:600 16px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">{{ c.name }}</div>
+            <div style="margin-top:3px;font:400 12.5px/1.3 'Hanken Grotesque',sans-serif;color:#9A8576;">{{ c.meta }}</div>
+            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1 'Hanken Grotesque',sans-serif;color:{{ c.statusColor }};"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.statusColor }};"></span>{{ c.status }}</div>
+          </div>
+          <span style="color:#C2A98F;font:300 24px/1 'Hanken Grotesque',sans-serif;flex:none;">›</span>
+        </button>
+      </sc-for>
+      <div style="margin-top:4px;background:#FCF7EF;border:1px dashed rgba(222,111,86,0.45);border-radius:18px;padding:15px 16px;">
+        <div style="display:flex;align-items:center;gap:11px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(140deg,#C98B7E,#D9A441);filter:blur(6px);flex:none;"></div>
+          <div style="flex:1;"><div style="font:600 14.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Priya liked you back</div><div style="font:400 12.5px/1.2 'Hanken Grotesque',sans-serif;color:#9A8576;">Waiting on an open slot.</div></div>
+        </div>
+        <div style="margin-top:11px;font:400 13px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">You're full — and that's fine. When a connection has run its course, free a slot to let Priya in. No rush, no penalty.</div>
+        <button onClick="{{ noop }}" style="margin-top:12px;width:100%;border:none;cursor:pointer;background:#EFE7D8;color:#7A6A5D;font:600 14px/1 'Hanken Grotesque',sans-serif;padding:12px;border-radius:12px;" style-hover="background:#E7DCC8;">Free a slot</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── MEET / WE MET ───────────────────────── -->
+  <sc-if value="{{ isMeet }}" hint-placeholder-val="{{ false }}">
+  <div style="position:relative;height:100%;display:flex;flex-direction:column;background:#F6EEE3;padding:56px 24px 26px;overflow:hidden;">
+    <sc-if value="{{ meetDone }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:380px;height:380px;border-radius:50%;background:radial-gradient(circle, rgba(217,164,65,0.28), rgba(217,164,65,0) 70%);pointer-events:none;"></div></sc-if>
+
+    <sc-if value="{{ meetPrompt }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ goChatBack }}" style="border:none;background:none;cursor:pointer;padding:0;color:#9A8576;font:300 30px/1 'Hanken Grotesque',sans-serif;align-self:flex-start;">‹</button>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+        <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E8C6A;">A good sign</div>
+        <h1 style="margin:10px 0 0;font:500 28px/1.16 'Newsreader',serif;color:#3B2D26;">You two keep<br>turning up.</h1>
+        <p style="margin:12px 0 0;font:400 15px/1.6 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Eight days and it hasn't gone quiet — the photo's almost fully revealed. That usually means it's time to be in the same room.</p>
+        <div style="margin-top:20px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:20px;padding:17px;box-shadow:0 4px 14px rgba(59,45,38,0.06);">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:#E4E9D8;color:#5E6B4E;font:600 9.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:.9px;padding:5px 9px;border-radius:30px;">SUGGESTED · EASY FOR YOU BOTH</div>
+          <div style="margin-top:11px;font:500 19px/1.25 'Newsreader',serif;color:#3B2D26;">Coffee, then a slow loop of Laurelhurst Park</div>
+          <div style="margin-top:7px;font:400 13.5px/1.5 'Hanken Grotesque',sans-serif;color:#8A6B5C;text-wrap:pretty;">Public, low-key, about 20 minutes from each of you. Sunday late morning has light coffee traffic.</div>
+        </div>
+      </div>
+      <button onClick="{{ confirmMet }}" style="width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;box-shadow:0 10px 22px rgba(222,111,86,0.3);" style-hover="background:#D5634A;">Suggest this to Maya</button>
+      <button onClick="{{ goChatBack }}" style="border:none;background:none;cursor:pointer;color:#9A8576;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px;">Not yet — keep talking</button>
+    </sc-if>
+
+    <sc-if value="{{ meetDone }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:24px;position:relative;">
+        <div style="display:flex;align-items:center;justify-content:center;animation:popIn .6s ease both;">
+          <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#D9A441);display:flex;align-items:center;justify-content:center;color:#FFFDF7;font:500 30px/1 'Newsreader',serif;border:3px solid #F6EEE3;box-shadow:0 10px 24px rgba(126,140,106,0.32);">M</div>
+          <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);display:flex;align-items:center;justify-content:center;color:#FFFDF7;font:600 14px/1 'Hanken Grotesque',sans-serif;letter-spacing:1px;border:3px solid #F6EEE3;box-shadow:0 10px 24px rgba(222,111,86,0.32);margin-left:-18px;">YOU</div>
+        </div>
+        <div>
+          <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#C98A3C;">You met</div>
+          <h1 style="margin:11px 0 0;font:500 30px/1.14 'Newsreader',serif;color:#3B2D26;">You and Maya<br>met in person.</h1>
+          <p style="margin:15px auto 0;max-width:300px;font:400 15px/1.6 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">That's the whole point of this place. Everything before today was just getting you to the same table.</p>
+        </div>
+        <div style="background:#FCF7EF;border:1px solid rgba(59,45,38,0.08);border-radius:16px;padding:13px 18px;font:400 13.5px/1.5 'Hanken Grotesque',sans-serif;color:#8A6B5C;">Laurelhurst Park · Sunday · 11am</div>
+      </div>
+      <button onClick="{{ noop }}" style="width:100%;border:none;cursor:pointer;background:#3B2D26;color:#F6EEE3;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;" style-hover="background:#2C211B;">Tell us how it went</button>
+      <button onClick="{{ openConnections }}" style="border:none;background:none;cursor:pointer;color:#9A8576;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px;">Back to your connections</button>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── FRIEND DISCOVERY ───────────────────────── -->
+  <sc-if value="{{ isFriendDiscovery }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F2F0E6;">
+    <div style="flex:none;padding:56px 24px 10px;">
+      <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#7E8C6A;">For you · Friends &amp; clubs</div>
+      <h1 style="margin:9px 0 0;font:500 27px/1.16 'Newsreader',serif;color:#3B2D26;">Find your people.</h1>
+      <p style="margin:10px 0 0;font:400 14px/1.5 'Hanken Grotesque',sans-serif;color:#5E6B4E;text-wrap:pretty;">Purely platonic. Real groups doing real things — drop into a bubble or find one good buddy.</p>
+    </div>
+    <div style="flex:1;overflow:auto;padding:8px 18px 20px;">
+      <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#9AA876;margin:8px 4px 9px;">Bubbles near you</div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <button onClick="{{ openClub }}" style="text-align:left;width:100%;cursor:pointer;background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:15px;box-shadow:0 2px 9px rgba(59,45,38,0.04);" style-hover="border-color:rgba(126,140,106,0.4);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div style="font:500 18px/1.15 'Newsreader',serif;color:#43512F;">Dawn Patrol Runners</div><span style="background:#E4E9D8;color:#5E6B4E;font:600 10px/1 'Hanken Grotesque',sans-serif;padding:5px 9px;border-radius:30px;white-space:nowrap;">24 in</span></div>
+          <div style="margin-top:6px;font:400 13.5px/1.45 'Hanken Grotesque',sans-serif;color:#7A6A5D;">Easy 5–8k, three mornings a week. No-drop, all paces welcome.</div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:7px;font:600 12px/1 'Hanken Grotesque',sans-serif;color:#9AA876;"><span style="width:6px;height:6px;border-radius:50%;background:#9AA876;"></span>Next: Sat 7am · Eastbank Esplanade</div>
+        </button>
+        <button onClick="{{ openClub }}" style="text-align:left;width:100%;cursor:pointer;background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:15px;box-shadow:0 2px 9px rgba(59,45,38,0.04);" style-hover="border-color:rgba(126,140,106,0.4);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div style="font:500 18px/1.15 'Newsreader',serif;color:#43512F;">Tuesday Pickup Frisbee</div><span style="background:#E4E9D8;color:#5E6B4E;font:600 10px/1 'Hanken Grotesque',sans-serif;padding:5px 9px;border-radius:30px;white-space:nowrap;">17 in</span></div>
+          <div style="margin-top:6px;font:400 13.5px/1.45 'Hanken Grotesque',sans-serif;color:#7A6A5D;">Casual ultimate, every level. We keep the score loose and the vibe looser.</div>
+          <div style="margin-top:10px;display:inline-flex;align-items:center;gap:7px;font:600 12px/1 'Hanken Grotesque',sans-serif;color:#9AA876;"><span style="width:6px;height:6px;border-radius:50%;background:#9AA876;"></span>Next: Tue 6pm · Irving Park</div>
+        </button>
+      </div>
+      <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#9AA876;margin:18px 4px 9px;">One good buddy</div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div style="display:flex;align-items:center;gap:13px;background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:14px;box-shadow:0 2px 9px rgba(59,45,38,0.04);">
+          <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#7E8C6A);filter:blur(6px);flex:none;"></div>
+          <div style="flex:1;min-width:0;"><div style="font:600 15.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Jordan, 35</div><div style="margin-top:3px;font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#7A6A5D;text-wrap:pretty;">Training for the same half-marathon. Wants a long-run partner.</div></div>
+          <button onClick="{{ noop }}" style="border:1px solid rgba(126,140,106,0.5);background:#EDF1E4;color:#43512F;cursor:pointer;font:600 13px/1 'Hanken Grotesque',sans-serif;padding:10px 13px;border-radius:12px;flex:none;" style-hover="background:#E4E9D8;">Wave</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:13px;background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:14px;box-shadow:0 2px 9px rgba(59,45,38,0.04);">
+          <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(140deg,#C98B7E,#D9A441);filter:blur(6px);flex:none;"></div>
+          <div style="flex:1;min-width:0;"><div style="font:600 15.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Sam, 38</div><div style="margin-top:3px;font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#7A6A5D;text-wrap:pretty;">At the bouldering gym twice a week. Looking for a regular climbing partner.</div></div>
+          <button onClick="{{ noop }}" style="border:1px solid rgba(126,140,106,0.5);background:#EDF1E4;color:#43512F;cursor:pointer;font:600 13px/1 'Hanken Grotesque',sans-serif;padding:10px 13px;border-radius:12px;flex:none;" style-hover="background:#E4E9D8;">Wave</button>
+        </div>
+      </div>
+      <button onClick="{{ openCreateBubble }}" style="margin-top:16px;width:100%;border:1px dashed rgba(126,140,106,0.5);background:none;cursor:pointer;color:#5E6B4E;font:600 14.5px/1 'Hanken Grotesque',sans-serif;padding:15px;border-radius:16px;" style-hover="background:#EDF1E4;">+ Start your own bubble</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── CLUB DETAIL ───────────────────────── -->
+  <sc-if value="{{ isClub }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F2F0E6;overflow:auto;">
+    <div style="position:relative;height:188px;flex:none;background:linear-gradient(150deg,#9AA876,#7E8C6A 55%,#5E6B4E);display:flex;align-items:flex-end;padding:18px;">
+      <button onClick="{{ openFriends }}" style="position:absolute;top:52px;left:18px;border:none;background:rgba(255,253,247,0.85);cursor:pointer;width:36px;height:36px;border-radius:50%;color:#43512F;font:300 26px/1 'Hanken Grotesque',sans-serif;">‹</button>
+      <div><div style="font:600 10px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,253,247,0.85);">Running bubble · Portland</div><div style="margin-top:6px;font:500 28px/1.1 'Newsreader',serif;color:#FFFDF7;">Dawn Patrol Runners</div></div>
+    </div>
+    <div style="padding:18px 22px 22px;">
+      <p style="margin:0;font:400 15px/1.55 'Hanken Grotesque',sans-serif;color:#5E5046;text-wrap:pretty;">Three mornings a week we meet before work and run an easy 5–8k along the river. No-drop, all paces, coffee after for whoever's not rushing off.</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:16px;">
+        <div style="display:flex;">
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);border:2px solid #F2F0E6;"></div>
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#7E8C6A);border:2px solid #F2F0E6;margin-left:-12px;"></div>
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,#C98B7E,#D9A441);border:2px solid #F2F0E6;margin-left:-12px;"></div>
+          <div style="width:34px;height:34px;border-radius:50%;background:#E0D6C2;border:2px solid #F2F0E6;margin-left:-12px;display:flex;align-items:center;justify-content:center;font:600 11px/1 'Hanken Grotesque',sans-serif;color:#8A6B5C;">+21</div>
+        </div>
+        <div style="font:500 13px/1.3 'Hanken Grotesque',sans-serif;color:#7A6A5D;">24 members · led by Renee</div>
+      </div>
+      <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#9AA876;margin:22px 0 11px;">Upcoming runs</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:14px;background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);border-radius:16px;padding:13px 15px;"><div style="text-align:center;flex:none;"><div style="font:600 10px/1 'Hanken Grotesque',sans-serif;color:#9AA876;text-transform:uppercase;letter-spacing:.5px;">Sat</div><div style="font:500 22px/1.1 'Newsreader',serif;color:#3B2D26;">7a</div></div><div style="flex:1;"><div style="font:600 14.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Riverside long run</div><div style="margin-top:2px;font:400 12.5px/1.3 'Hanken Grotesque',sans-serif;color:#9A8576;">Eastbank Esplanade · 8k easy · 11 going</div></div></div>
+        <div style="display:flex;align-items:center;gap:14px;background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);border-radius:16px;padding:13px 15px;"><div style="text-align:center;flex:none;"><div style="font:600 10px/1 'Hanken Grotesque',sans-serif;color:#9AA876;text-transform:uppercase;letter-spacing:.5px;">Tue</div><div style="font:500 22px/1.1 'Newsreader',serif;color:#3B2D26;">6a</div></div><div style="flex:1;"><div style="font:600 14.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Hill repeats (optional)</div><div style="margin-top:2px;font:400 12.5px/1.3 'Hanken Grotesque',sans-serif;color:#9A8576;">Mt Tabor · bring water · 6 going</div></div></div>
+      </div>
+      <button onClick="{{ openClubChat }}" style="margin-top:20px;width:100%;border:none;cursor:pointer;background:#7E8C6A;color:#FFFDF7;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:16px;border-radius:16px;box-shadow:0 10px 22px rgba(126,140,106,0.3);" style-hover="background:#6E7C5A;">Join the bubble</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── CREATE A BUBBLE ───────────────────────── -->
+  <sc-if value="{{ isCreateBubble }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F2F0E6;padding:56px 24px 26px;">
+    <button onClick="{{ openFriends }}" style="border:none;background:none;cursor:pointer;padding:0;color:#9A8576;font:300 30px/1 'Hanken Grotesque',sans-serif;align-self:flex-start;">‹</button>
+    <h1 style="margin:8px 0 0;font:500 27px/1.16 'Newsreader',serif;color:#3B2D26;">Start a bubble.</h1>
+    <p style="margin:9px 0 0;font:400 14px/1.5 'Hanken Grotesque',sans-serif;color:#5E6B4E;text-wrap:pretty;">Name the thing you want to do regularly. We'll surface it to people nearby who want the same.</p>
+    <div style="flex:1;overflow:auto;margin-top:20px;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:6px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#9AA876;">What is it</span><div style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.12);border-radius:14px;padding:14px 16px;font:500 16px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Sunday Slow Hikes</div></div>
+      <div style="display:flex;flex-direction:column;gap:8px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#9AA876;">Kind of thing</span><div style="display:flex;flex-wrap:wrap;gap:9px;"><span style="background:#7E8C6A;color:#FFFDF7;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px 16px;border-radius:30px;">Hiking</span><span style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.12);color:#5E5046;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px 16px;border-radius:30px;">Running</span><span style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.12);color:#5E5046;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px 16px;border-radius:30px;">Climbing</span><span style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.12);color:#5E5046;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px 16px;border-radius:30px;">Cooking</span><span style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.12);color:#5E5046;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:11px 16px;border-radius:30px;">Cycling</span></div></div>
+      <div style="display:flex;gap:12px;"><div style="flex:1;display:flex;flex-direction:column;gap:6px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#9AA876;">How often</span><div style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.12);border-radius:14px;padding:14px 16px;font:500 15px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Weekly</div></div><div style="flex:1;display:flex;flex-direction:column;gap:6px;"><span style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:.5px;text-transform:uppercase;color:#9AA876;">Where</span><div style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.12);border-radius:14px;padding:14px 16px;font:500 15px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Forest Park</div></div></div>
+    </div>
+    <button onClick="{{ openClubChat }}" style="width:100%;border:none;cursor:pointer;background:#7E8C6A;color:#FFFDF7;font:600 16px/1 'Hanken Grotesque',sans-serif;padding:17px;border-radius:16px;box-shadow:0 10px 22px rgba(126,140,106,0.3);" style-hover="background:#6E7C5A;">Create the bubble</button>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── CLUB COORDINATION ───────────────────────── -->
+  <sc-if value="{{ isClubChat }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F2F0E6;">
+    <div style="flex:none;padding:54px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(59,45,38,0.07);">
+      <button onClick="{{ openClub }}" style="border:none;background:none;cursor:pointer;padding:0 4px;color:#9A8576;font:300 30px/1 'Hanken Grotesque',sans-serif;">‹</button>
+      <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(140deg,#9AA876,#7E8C6A);flex:none;display:flex;align-items:center;justify-content:center;color:#FFFDF7;font:500 16px/1 'Newsreader',serif;">DP</div>
+      <div style="flex:1;min-width:0;"><div style="font:600 16px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Dawn Patrol Runners</div><div style="font:500 11.5px/1.2 'Hanken Grotesque',sans-serif;color:#9A8576;margin-top:2px;">24 members · 5 here now</div></div>
+    </div>
+    <div style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:16px 16px 8px;">
+      <div style="background:#FFFDF7;border:1px solid rgba(126,140,106,0.25);border-radius:18px;padding:15px;box-shadow:0 2px 9px rgba(59,45,38,0.05);">
+        <div style="font:600 10px/1 'Hanken Grotesque',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#9AA876;margin-bottom:9px;">Next run · vote to lock it</div>
+        <div style="font:500 18px/1.2 'Newsreader',serif;color:#3B2D26;">Saturday riverside 8k</div>
+        <div style="margin-top:5px;font:400 13px/1.4 'Hanken Grotesque',sans-serif;color:#7A6A5D;">Eastbank Esplanade · meet at the bridge</div>
+        <div style="display:flex;gap:8px;margin-top:13px;">
+          <button onClick="{{ noop }}" style="flex:1;border:none;cursor:pointer;background:#7E8C6A;color:#FFFDF7;font:600 13.5px/1 'Hanken Grotesque',sans-serif;padding:11px;border-radius:12px;" style-hover="background:#6E7C5A;">I'm in (11)</button>
+          <button onClick="{{ noop }}" style="flex:none;border:1px solid rgba(59,45,38,0.14);background:#F6EEE3;color:#7A6A5D;cursor:pointer;font:600 13.5px/1 'Hanken Grotesque',sans-serif;padding:11px 16px;border-radius:12px;">Can't</button>
+        </div>
+      </div>
+      <div style="align-self:flex-start;max-width:82%;display:flex;gap:9px;align-items:flex-end;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(140deg,#C98B7E,#D9A441);flex:none;"></div><div><div style="font:600 11px/1 'Hanken Grotesque',sans-serif;color:#9A8576;margin:0 0 3px 4px;">Renee</div><div style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);color:#3B2D26;padding:11px 14px;border-radius:16px 16px 16px 6px;font:400 14.5px/1.45 'Hanken Grotesque',sans-serif;text-wrap:pretty;">bridge meetup at 6:55, we roll out at 7 sharp. coffee at Either/Or after for anyone free ☕</div></div></div>
+      <div style="align-self:flex-start;max-width:82%;display:flex;gap:9px;align-items:flex-end;"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(140deg,#9AA876,#7E8C6A);flex:none;"></div><div><div style="font:600 11px/1 'Hanken Grotesque',sans-serif;color:#9A8576;margin:0 0 3px 4px;">Marcus</div><div style="background:#FFFDF7;border:1px solid rgba(59,45,38,0.08);color:#3B2D26;padding:11px 14px;border-radius:16px 16px 16px 6px;font:400 14.5px/1.45 'Hanken Grotesque',sans-serif;text-wrap:pretty;">in. bringing a friend who's new to town, hope that's ok</div></div></div>
+      <div style="align-self:flex-end;max-width:82%;background:#7E8C6A;color:#FFFDF7;padding:11px 14px;border-radius:16px 16px 6px 16px;font:400 14.5px/1.45 'Hanken Grotesque',sans-serif;text-wrap:pretty;box-shadow:0 3px 9px rgba(126,140,106,0.3);">always! the more the better — see you at the bridge</div>
+    </div>
+    <div style="flex:none;padding:8px 14px 16px;"><div style="display:flex;align-items:center;gap:9px;background:#FFFDF7;border:1px solid rgba(59,45,38,0.1);border-radius:26px;padding:7px 7px 7px 18px;"><div style="flex:1;font:400 15px/1 'Hanken Grotesque',sans-serif;color:#B6A493;">Message the bubble…</div><div style="width:38px;height:38px;border-radius:50%;background:#7E8C6A;display:flex;align-items:center;justify-content:center;color:#fff;font:600 19px/1 'Hanken Grotesque',sans-serif;">↑</div></div></div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── IN THE WILD (HEAT MAP) ───────────────────────── -->
+  <sc-if value="{{ isHeatmap }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#211A16;">
+    <div style="flex:none;padding:54px 24px 14px;background:#211A16;">
+      <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#D9A441;">In the wild</div>
+      <h1 style="margin:9px 0 0;font:500 26px/1.16 'Newsreader',serif;color:#F6EEE3;">Where your kind<br>of people gather.</h1>
+      <p style="margin:9px 0 0;font:400 13.5px/1.5 'Hanken Grotesque',sans-serif;color:#B6A493;text-wrap:pretty;">Warmth, not whereabouts. We show the feel of an <i style="font-family:'Newsreader',serif;">area</i> — never a person, never a live location.</p>
+    </div>
+    <div style="flex:1;position:relative;overflow:hidden;background:#2A211B;">
+      <div style="position:absolute;inset:0;background:
+        radial-gradient(circle at 32% 30%, rgba(222,111,86,0.55), rgba(222,111,86,0) 38%),
+        radial-gradient(circle at 64% 42%, rgba(217,164,65,0.5), rgba(217,164,65,0) 42%),
+        radial-gradient(circle at 46% 70%, rgba(222,111,86,0.42), rgba(222,111,86,0) 40%),
+        radial-gradient(circle at 78% 74%, rgba(126,140,106,0.42), rgba(126,140,106,0) 36%),
+        radial-gradient(circle at 20% 80%, rgba(217,164,65,0.3), rgba(217,164,65,0) 36%);filter:blur(26px);"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 64px), linear-gradient(45deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 64px);"></div>
+      <div style="position:absolute;left:24%;top:24%;font:600 12px/1.3 'Hanken Grotesque',sans-serif;color:rgba(246,238,227,0.92);text-shadow:0 1px 6px rgba(0,0,0,0.5);">Alberta Arts<br><span style="font:500 10.5px/1 'Hanken Grotesque',sans-serif;color:rgba(246,238,227,0.6);">buzzing tonight</span></div>
+      <div style="position:absolute;left:58%;top:38%;font:600 12px/1.3 'Hanken Grotesque',sans-serif;color:rgba(246,238,227,0.92);text-shadow:0 1px 6px rgba(0,0,0,0.5);">The Pearl<br><span style="font:500 10.5px/1 'Hanken Grotesque',sans-serif;color:rgba(246,238,227,0.6);">steady</span></div>
+      <div style="position:absolute;left:70%;top:70%;font:600 12px/1.3 'Hanken Grotesque',sans-serif;color:rgba(246,238,227,0.92);text-shadow:0 1px 6px rgba(0,0,0,0.5);">Sellwood<br><span style="font:500 10.5px/1 'Hanken Grotesque',sans-serif;color:rgba(246,238,227,0.6);">quiet, warm</span></div>
+      <div style="position:absolute;left:14%;top:74%;font:600 12px/1.3 'Hanken Grotesque',sans-serif;color:rgba(246,238,227,0.78);text-shadow:0 1px 6px rgba(0,0,0,0.5);">Hawthorne</div>
+    </div>
+    <div style="flex:none;padding:14px 22px 24px;background:#211A16;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="flex:1;height:8px;border-radius:5px;background:linear-gradient(90deg,#3B2D26,#7E8C6A,#D9A441,#DE6F56);"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font:500 10.5px/1 'Hanken Grotesque',sans-serif;color:#9A8576;"><span>Calm</span><span>Lively</span></div>
+      <div style="margin-top:14px;display:flex;gap:9px;align-items:flex-start;background:rgba(246,238,227,0.06);border-radius:13px;padding:12px 13px;"><span style="width:8px;height:8px;border-radius:50%;background:#7E8C6A;margin-top:5px;flex:none;"></span><span style="font:400 12.5px/1.5 'Hanken Grotesque',sans-serif;color:#C2B4A4;text-wrap:pretty;">No dots, no names, no tracking. Areas only update a few times a day, and always fuzzed.</span></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── SAFETY ───────────────────────── -->
+  <sc-if value="{{ isSafety }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6EEE3;">
+    <div style="flex:none;padding:56px 24px 8px;">
+      <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#B98E5E;">Safety &amp; privacy</div>
+      <h1 style="margin:9px 0 0;font:500 27px/1.16 'Newsreader',serif;color:#3B2D26;">You're in control.<br>Always.</h1>
+    </div>
+    <div style="flex:1;overflow:auto;padding:14px 18px 20px;display:flex;flex-direction:column;gap:13px;">
+      <div style="background:#FBE6DF;border:1px solid rgba(222,111,86,0.3);border-radius:20px;padding:17px 18px;">
+        <div style="display:flex;align-items:center;gap:11px;"><div style="width:38px;height:38px;border-radius:11px;background:#DE6F56;display:flex;align-items:center;justify-content:center;color:#fff;font:600 18px/1 'Hanken Grotesque',sans-serif;flex:none;">⦸</div><div><div style="font:600 16px/1.2 'Hanken Grotesque',sans-serif;color:#7A3D2C;">Panic hide</div><div style="font:400 12.5px/1.3 'Hanken Grotesque',sans-serif;color:#9A6A5C;">One tap and you vanish from the app entirely.</div></div></div>
+        <button onClick="{{ noop }}" style="margin-top:13px;width:100%;border:none;cursor:pointer;background:#DE6F56;color:#FFFBF4;font:600 15px/1 'Hanken Grotesque',sans-serif;padding:14px;border-radius:13px;" style-hover="background:#D5634A;">Hide me now</button>
+      </div>
+      <div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:6px 16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(59,45,38,0.07);"><div style="padding-right:14px;"><div style="font:600 15px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Share approximate area</div><div style="margin-top:3px;font:400 12.5px/1.4 'Hanken Grotesque',sans-serif;color:#9A8576;text-wrap:pretty;">Powers the heat map. Neighborhood-level, never precise.</div></div><div style="width:46px;height:28px;border-radius:30px;background:#7E8C6A;flex:none;position:relative;"><div style="position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;"></div></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 0;"><div style="padding-right:14px;"><div style="font:600 15px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Hide my exact distance</div><div style="margin-top:3px;font:400 12.5px/1.4 'Hanken Grotesque',sans-serif;color:#9A8576;">Show "nearby" instead of a number.</div></div><div style="width:46px;height:28px;border-radius:30px;background:#7E8C6A;flex:none;position:relative;"><div style="position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;"></div></div></div>
+      </div>
+      <div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;overflow:hidden;">
+        <button onClick="{{ noop }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;padding:15px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(59,45,38,0.07);" style-hover="background:#FCF7EF;"><span style="width:32px;height:32px;border-radius:9px;background:#EFE7D8;display:flex;align-items:center;justify-content:center;color:#7A6A5D;font:600 15px/1 'Hanken Grotesque',sans-serif;flex:none;">⊘</span><div style="flex:1;"><div style="font:600 14.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Block someone</div><div style="font:400 12px/1.3 'Hanken Grotesque',sans-serif;color:#9A8576;">They'll never know, and never see you again.</div></div></button>
+        <button onClick="{{ noop }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;padding:15px 16px;display:flex;align-items:center;gap:12px;" style-hover="background:#FCF7EF;"><span style="width:32px;height:32px;border-radius:9px;background:#EFE7D8;display:flex;align-items:center;justify-content:center;color:#7A6A5D;font:600 15px/1 'Hanken Grotesque',sans-serif;flex:none;">⚑</span><div style="flex:1;"><div style="font:600 14.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Report a problem</div><div style="font:400 12px/1.3 'Hanken Grotesque',sans-serif;color:#9A8576;">A real person reviews every report.</div></div></button>
+      </div>
+      <div style="text-align:center;padding:4px 16px 0;font:400 12px/1.5 'Hanken Grotesque',sans-serif;color:#B6A493;text-wrap:pretty;">We'll never sell your location or show you to anyone you've blocked.</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── REAL-WORLD SPOTS ───────────────────────── -->
+  <sc-if value="{{ isExperiences }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6EEE3;">
+    <div style="flex:none;padding:56px 24px 10px;">
+      <div style="font:600 11px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.6px;text-transform:uppercase;color:#B98E5E;">Take it offline</div>
+      <h1 style="margin:9px 0 0;font:500 27px/1.16 'Newsreader',serif;color:#3B2D26;">Somewhere to<br>actually meet.</h1>
+      <p style="margin:10px 0 0;font:400 14px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;">Hand-picked spots near you both — easy, public, and good for talking. Built for a first date or a club outing.</p>
+    </div>
+    <div style="flex:1;overflow:auto;padding:8px 18px 20px;display:flex;flex-direction:column;gap:13px;">
+      <div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:20px;overflow:hidden;box-shadow:0 3px 12px rgba(59,45,38,0.05);">
+        <div style="height:96px;background:linear-gradient(135deg,#E58A6F,#D9A441);"></div>
+        <div style="padding:15px 17px;"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div style="font:500 18px/1.2 'Newsreader',serif;color:#3B2D26;">Hands-on pasta class</div><span style="background:#F7DDD3;color:#B85138;font:600 10px/1 'Hanken Grotesque',sans-serif;padding:5px 9px;border-radius:30px;white-space:nowrap;">$$ · 2 hr</span></div><div style="margin-top:6px;font:400 13.5px/1.45 'Hanken Grotesque',sans-serif;color:#7A6A5D;text-wrap:pretty;">You make dinner, you eat dinner, nobody runs out of things to say. Pearl District.</div><button onClick="{{ noop }}" style="margin-top:13px;width:100%;border:none;cursor:pointer;background:#F7DDD3;color:#B85138;font:600 14.5px/1 'Hanken Grotesque',sans-serif;padding:12px;border-radius:12px;" style-hover="background:#F2CDBE;">Suggest this</button></div>
+      </div>
+      <div style="display:flex;gap:13px;">
+        <div style="flex:1;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:20px;overflow:hidden;box-shadow:0 3px 12px rgba(59,45,38,0.05);"><div style="height:74px;background:linear-gradient(135deg,#9AA876,#7E8C6A);"></div><div style="padding:13px 14px;"><div style="font:500 15.5px/1.2 'Newsreader',serif;color:#3B2D26;">Climbing gym day pass</div><div style="margin-top:5px;font:400 12.5px/1.4 'Hanken Grotesque',sans-serif;color:#7A6A5D;">Low stakes, lots of laughing.</div><button onClick="{{ noop }}" style="margin-top:11px;width:100%;border:1px solid rgba(126,140,106,0.5);background:#EDF1E4;color:#43512F;cursor:pointer;font:600 13px/1 'Hanken Grotesque',sans-serif;padding:10px;border-radius:11px;">Suggest</button></div></div>
+        <div style="flex:1;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:20px;overflow:hidden;box-shadow:0 3px 12px rgba(59,45,38,0.05);"><div style="height:74px;background:linear-gradient(135deg,#C98B7E,#D9A441);"></div><div style="padding:13px 14px;"><div style="font:500 15.5px/1.2 'Newsreader',serif;color:#3B2D26;">Quiet corner café</div><div style="margin-top:5px;font:400 12.5px/1.4 'Hanken Grotesque',sans-serif;color:#7A6A5D;">Good light, slow refills.</div><button onClick="{{ noop }}" style="margin-top:11px;width:100%;border:1px solid rgba(222,111,86,0.45);background:#F7DDD3;color:#B85138;cursor:pointer;font:600 13px/1 'Hanken Grotesque',sans-serif;padding:10px;border-radius:11px;">Suggest</button></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── YOUR PROFILE ───────────────────────── -->
+  <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6EEE3;overflow:auto;">
+    <div style="flex:none;display:flex;flex-direction:column;align-items:center;text-align:center;padding:56px 24px 8px;">
+      <div style="position:relative;width:96px;height:96px;">
+        <div style="width:96px;height:96px;border-radius:50%;background:linear-gradient(140deg,#E58A6F,#D9A441);border:3px solid #FFFBF4;box-shadow:0 10px 24px rgba(222,111,86,0.28);"></div>
+        <div style="position:absolute;-bottom:0;bottom:-4px;right:-4px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.1);border-radius:30px;padding:5px 10px;font:600 10px/1 'Hanken Grotesque',sans-serif;color:#7E8C6A;box-shadow:0 2px 8px rgba(59,45,38,0.1);">SHOWN WHEN EARNED</div>
+      </div>
+      <h1 style="margin:16px 0 0;font:500 26px/1.1 'Newsreader',serif;color:#3B2D26;">Alex, 34</h1>
+      <div style="margin-top:5px;font:400 13.5px/1.3 'Hanken Grotesque',sans-serif;color:#9A8576;">Portland, OR · here for something real</div>
+      <div style="margin-top:13px;background:#EFE7D8;border-radius:14px;padding:11px 15px;font:400 12.5px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;max-width:300px;">Your photo stays soft until a conversation earns it — for them, and for you. Looks are never the front door here.</div>
+    </div>
+    <div style="padding:18px 22px 24px;">
+      <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#B98E5E;margin-bottom:11px;">What you're about</div>
+      <div style="display:flex;flex-wrap:wrap;gap:9px;">
+        <span style="background:#F7DDD3;color:#7A3D2C;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:10px 15px;border-radius:30px;">Depth</span>
+        <span style="background:#E4E9D8;color:#43512F;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:10px 15px;border-radius:30px;">Trail running</span>
+        <span style="background:#F3E4C4;color:#9A7322;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:10px 15px;border-radius:30px;">Cooking for people</span>
+        <span style="background:#E4E9D8;color:#43512F;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:10px 15px;border-radius:30px;">Books</span>
+        <span style="background:#F7DDD3;color:#7A3D2C;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:10px 15px;border-radius:30px;">Rootedness</span>
+      </div>
+      <div style="margin-top:20px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:16px 17px;box-shadow:0 2px 9px rgba(59,45,38,0.04);">
+        <div style="font:italic 400 14px/1 'Newsreader',serif;color:#C98A3C;">A perfect, ordinary Saturday…</div>
+        <p style="margin:9px 0 0;font:400 15px/1.6 'Hanken Grotesque',sans-serif;color:#5E5046;text-wrap:pretty;">Up early for a long run by the river, then the farmers market, then cooking something slow for whoever wants to come by.</p>
+      </div>
+      <div style="margin-top:14px;background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:16px 17px;box-shadow:0 2px 9px rgba(59,45,38,0.04);">
+        <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#B98E5E;margin-bottom:8px;">Looking for</div>
+        <div style="font:400 15px/1.5 'Hanken Grotesque',sans-serif;color:#3B2D26;">A real partner — I know what I want, and I'm ready for it.</div>
+      </div>
+      <button onClick="{{ noop }}" style="margin-top:18px;width:100%;border:1px solid rgba(59,45,38,0.14);background:#FFFBF4;cursor:pointer;color:#5E5046;font:600 15px/1 'Hanken Grotesque',sans-serif;padding:15px;border-radius:14px;" style-hover="background:#FCF7EF;">Edit profile</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ───────────────────────── SETTINGS ───────────────────────── -->
+  <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100%;display:flex;flex-direction:column;background:#F6EEE3;overflow:auto;">
+    <div style="flex:none;padding:56px 24px 8px;"><h1 style="margin:0;font:500 28px/1.1 'Newsreader',serif;color:#3B2D26;">Settings</h1></div>
+    <div style="padding:14px 18px 26px;display:flex;flex-direction:column;gap:18px;">
+      <div>
+        <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#B98E5E;margin:0 4px 9px;">What you're here for</div>
+        <div style="display:flex;gap:9px;background:#EFE7D8;border-radius:15px;padding:5px;">
+          <button onClick="{{ noop }}" style="flex:1;border:none;cursor:pointer;background:#FFFBF4;color:#7A3D2C;font:600 14.5px/1 'Hanken Grotesque',sans-serif;padding:12px;border-radius:11px;box-shadow:0 1px 4px rgba(59,45,38,0.1);">Dating</button>
+          <button onClick="{{ noop }}" style="flex:1;border:none;cursor:pointer;background:none;color:#9A8576;font:600 14.5px/1 'Hanken Grotesque',sans-serif;padding:12px;border-radius:11px;">Friends &amp; clubs</button>
+        </div>
+        <div style="margin-top:8px;font:400 12px/1.45 'Hanken Grotesque',sans-serif;color:#9A8576;padding:0 4px;text-wrap:pretty;">Two separate worlds. We never mix who you meet for dating with who you meet for friends.</div>
+      </div>
+      <div>
+        <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#B98E5E;margin:0 4px 9px;">Membership</div>
+        <div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:16px 17px;box-shadow:0 2px 9px rgba(59,45,38,0.04);">
+          <div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font:600 15.5px/1.2 'Hanken Grotesque',sans-serif;color:#3B2D26;">Inside the building</div><div style="margin-top:3px;font:400 12.5px/1.3 'Hanken Grotesque',sans-serif;color:#9A8576;">$14 / month · founding rate, locked in</div></div><span style="background:#E4E9D8;color:#5E6B4E;font:600 10px/1 'Hanken Grotesque',sans-serif;padding:6px 10px;border-radius:30px;">ACTIVE</span></div>
+          <div style="margin-top:13px;font:400 12.5px/1.5 'Hanken Grotesque',sans-serif;color:#6E5B50;text-wrap:pretty;border-top:1px solid rgba(59,45,38,0.07);padding-top:12px;">We earn when you leave for a real date — not when you scroll. Pause anytime; no win-back tricks.</div>
+        </div>
+      </div>
+      <div>
+        <div style="font:600 10.5px/1 'Hanken Grotesque',sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:#B98E5E;margin:0 4px 9px;">Privacy</div>
+        <div style="background:#FFFBF4;border:1px solid rgba(59,45,38,0.08);border-radius:18px;padding:4px 16px;">
+          <button onClick="{{ openSafety }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;padding:14px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(59,45,38,0.07);" style-hover="opacity:0.7;"><span style="font:500 15px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Safety &amp; location controls</span><span style="color:#C2A98F;font:300 22px/1 'Hanken Grotesque',sans-serif;">›</span></button>
+          <button onClick="{{ openHeatmap }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;padding:14px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(59,45,38,0.07);" style-hover="opacity:0.7;"><span style="font:500 15px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Heat map &amp; visibility</span><span style="color:#C2A98F;font:300 22px/1 'Hanken Grotesque',sans-serif;">›</span></button>
+          <button onClick="{{ noop }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;padding:14px 0;display:flex;align-items:center;justify-content:space-between;" style-hover="opacity:0.7;"><span style="font:500 15px/1 'Hanken Grotesque',sans-serif;color:#3B2D26;">Notifications</span><span style="color:#C2A98F;font:300 22px/1 'Hanken Grotesque',sans-serif;">›</span></button>
+        </div>
+      </div>
+      <button onClick="{{ noop }}" style="border:none;background:none;cursor:pointer;color:#B6A493;font:500 14px/1 'Hanken Grotesque',sans-serif;padding:6px;text-align:center;">Sign out</button>
+    </div>
+  </div>
+  </sc-if>
+
+</x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:540,&quot;height&quot;:1000},&quot;responsePace&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Snappy&quot;,&quot;Natural&quot;,&quot;Relaxed&quot;],&quot;default&quot;:&quot;Natural&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showRecapCard&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    phase: 'welcome',
+    intent: null,
+    demoIdx: 0, demoPhase: 'choosing', demoPicks: {},
+    deepStep: 0,
+    deepData: { values: [], interests: [], saturday: "Up early for a long run by the river, then the farmers market, then cooking something slow for whoever wants to come by.", looking: null, looks: null },
+    roundIdx: 0, picks: {}, roundPhase: 'choosing',
+    messages: null, mayaTyping: false, suggestions: null,
+    meetPhase: 'prompt',
+  };
+
+  rounds = [
+    { label: 'Round 1 of 5', a: "A tiny kitchen that's always full of people", b: 'A huge kitchen you mostly cook in alone' },
+    { label: 'Round 2 of 5', a: 'Reread the same ten books forever', b: "Only new books — some you'll hate" },
+    { label: 'Round 3 of 5', a: 'Be twenty minutes early to everything', b: 'Slide in right as the doors close' },
+    { label: 'Round 4 of 5', a: 'A text back in three seconds', b: 'Silence, then a whole paragraph' },
+    { label: 'Round 5 of 5', a: 'A Sunday with zero plans', b: 'A Sunday packed wall to wall' },
+  ];
+  mayaPicks = ['B', 'A', 'B', 'B', 'A'];
+  reactions = [
+    { agreeA: "Two people who'd rather be crowded than alone. Noted.", agreeB: 'You both like room to breathe. Comfortable silence incoming.', differ: 'One of you wants the party in the kitchen. The other wants the kitchen to themselves.' },
+    { agreeA: "Re-readers — you both have comfort books, don't lie.", agreeB: "Risk-takers. You'd both rather be surprised than safe.", differ: 'Comfort versus chaos. The eternal bookshelf debate.' },
+    { agreeA: 'Two early birds. Your future dinner reservations are safe.', agreeB: 'Chaos recognizes chaos.', differ: "One of you is already there. The other is 'leaving now' (they are not)." },
+    { agreeA: "Fast repliers — you'll never wonder where you stand.", agreeB: 'You both like a slow burn: a whole paragraph or nothing.', differ: 'Three seconds versus a thoughtful day later. Good luck.' },
+    { agreeA: 'Two people protecting their nothing-Sundays. Sacred.', agreeB: 'You would both fill the calendar. Rest is for the weak, apparently.', differ: 'One wants stillness. One wants the whole itinerary.' },
+  ];
+
+  demoRounds = [
+    { a: 'A night that drifts till 2am at a diner', b: 'Home by ten with tea and a good book' },
+    { a: 'Plan the whole trip down to the hour', b: 'Land somewhere and figure it out' },
+  ];
+  demoSam = ['A', 'B'];
+  demoCaptions = [
+    { same: "Same energy — you'd both still be talking when they kick you out.", diff: "See that? One of you closes the diner; one's already in pajamas. That's a real thing to know — and nobody had to ask." },
+    { same: 'Two improvisers. This trip plans itself.', diff: 'Planner meets free-fall. Could be a disaster, could be the best trip of your life. Now you know to ask.' },
+  ];
+
+  deepSteps = [
+    { key: 'values', layout: 'cloud', multi: true, title: 'What do you want more of, lately?', sub: 'Pick a few. There are no wrong answers here.', opts: ['Depth', 'Adventure', 'Stillness', 'Creativity', 'Community', 'Growth', 'Play', 'Rootedness'] },
+    { key: 'interests', layout: 'cloud', multi: true, title: 'What actually fills your weekends?', sub: 'The real ones — not the aspirational ones.', opts: ['Trail running', 'Live music', 'Cooking for people', 'Books', 'Pottery', 'Open-water swimming', 'Old films', 'Long walks', 'Gardening', 'Bouldering'] },
+    { key: 'saturday', layout: 'text', title: 'Finish the thought.', sub: 'A perfect, ordinary Saturday looks like…' },
+    { key: 'looking', layout: 'stack', multi: false, title: 'And what are you actually hoping for?', sub: 'Honesty here saves everyone time.', opts: [ { label: 'A real partner', sub: 'I know what I want, and I\u2019m ready for it.' }, { label: 'Something serious, eventually', sub: 'No rush — but heading somewhere real.' }, { label: 'Still figuring it out', sub: 'Open to where a good connection goes.' } ] },
+    { key: 'looks', layout: 'stack', multi: false, title: 'One honest question — just between us.', sub: 'Attraction matters, and pretending it doesn\u2019t helps no one.', footnote: 'We weave this in quietly to shape who we suggest. You\u2019ll never see it, and neither will anyone else.', opts: [ { label: 'I have a clear type' }, { label: 'I\u2019m fairly open' }, { label: 'Looks come last for me' } ] },
+  ];
+
+  navLabels = { welcome:'Welcome', intent:'Intent', onboardTiny:'Quick start', demo:'Demo activity', deep:'Deep setup', waiting:"Who's waiting", building:'The building', discovery:'Discovery', match:'The match', activity:'Activity \u2605', chat:'Chat', connections:'Connections', meet:'Ready to meet', friendDiscovery:'Find your people', club:'Club detail', createBubble:'Start a bubble', clubChat:'Club coordination', heatmap:'In the wild', safety:'Safety', experiences:'Real-world spots', profile:'Your profile', settings:'Settings' };
+  navSections = [
+    { title: 'Courtyard', ids: ['welcome','intent','onboardTiny','demo','deep','waiting','building'] },
+    { title: 'Dating', ids: ['discovery','match','activity','chat','connections','meet'] },
+    { title: 'Friends & clubs', ids: ['friendDiscovery','club','createBubble','clubChat'] },
+    { title: 'Around you', ids: ['heatmap','safety'] },
+    { title: 'You', ids: ['experiences','profile','settings'] },
+  ];
+  discovery = [
+    { name:'Maya', age:33, grad:'linear-gradient(140deg,#9AA876,#D9A441)', tag:'SHARED', tagBg:'#E4E9D8', tagColor:'#5E6B4E', lead:'You both flagged', reason:'Tomorrow, and Tomorrow, and Tomorrow \u2014 and you\u2019re both marathon-training this spring.' },
+    { name:'Devin', age:36, grad:'linear-gradient(140deg,#E58A6F,#D9A441)', tag:'SHARED', tagBg:'#E4E9D8', tagColor:'#5E6B4E', lead:'Same plan as you:', reason:'Oaxaca, spring 2027 \u2014 you picked nearly the same week.' },
+    { name:'Priya', age:35, grad:'linear-gradient(140deg,#C98B7E,#D9A441)', tag:'COMPLEMENTS YOU', tagBg:'#F3E4C4', tagColor:'#9A7322', lead:'She fills a gap:', reason:'She throws pottery every Sunday; you wrote \u201clearn the wheel\u201d on your list.' },
+  ];
+  connections = [
+    { name:'Maya', init:'M', grad:'linear-gradient(140deg,#9AA876,#D9A441)', blur:'2px', meta:'You played Would You Rather', status:'Chatting now', statusColor:'#7E8C6A', go:'chat' },
+    { name:'Devin', init:'D', grad:'linear-gradient(140deg,#E58A6F,#D9A441)', blur:'6px', meta:'Matched on Oaxaca 2027', status:'Your move \u2014 play a round', statusColor:'#C98A3C', go:'activity' },
+    { name:'Theo', init:'T', grad:'linear-gradient(140deg,#C98B7E,#D9A441)', blur:'7px', meta:'Matched on trail running', status:'Quiet for 6 days', statusColor:'#9A8576', go:null },
+  ];
+
+  pace() {
+    const p = this.props.responsePace || 'Natural';
+    if (p === 'Snappy') return { think: 750, reply: 950 };
+    if (p === 'Relaxed') return { think: 2000, reply: 2600 };
+    return { think: 1300, reply: 1700 };
+  }
+
+  go = (phase) => { clearTimeout(this._t); this.setState({ phase }); };
+  noop = () => {};
+
+  comeIn = () => this.go('intent');
+  chooseDating = () => this.setState({ intent: 'dating' });
+  chooseFriends = () => this.setState({ intent: 'friends' });
+  toTiny = () => { if (this.state.intent) this.go('onboardTiny'); };
+  toDemo = () => this.setState({ phase: 'demo', demoIdx: 0, demoPhase: 'choosing', demoPicks: {} });
+  toDeep = () => this.setState({ phase: 'deep', deepStep: 0 });
+  toBuilding = () => this.go('building');
+  enterBuilding = () => this.go('match');
+
+  demoPick = (c) => {
+    if (this.state.demoPhase !== 'choosing') return;
+    clearTimeout(this._t);
+    this.setState((s) => ({ demoPicks: { ...s.demoPicks, [s.demoIdx]: c }, demoPhase: 'thinking' }));
+    this._t = setTimeout(() => this.setState({ demoPhase: 'revealed' }), this.pace().think);
+  };
+  demoNext = () => {
+    if (this.state.demoIdx >= this.demoRounds.length - 1) { this.setState({ demoPhase: 'done' }); return; }
+    this.setState((s) => ({ demoIdx: s.demoIdx + 1, demoPhase: 'choosing' }));
+  };
+
+  toggleDeep = (key, val, multi) => {
+    this.setState((s) => {
+      const d = { ...s.deepData };
+      if (multi) {
+        const cur = d[key] || [];
+        d[key] = cur.includes(val) ? cur.filter((x) => x !== val) : [...cur, val];
+      } else { d[key] = val; }
+      return { deepData: d };
+    });
+  };
+  deepBack = () => { if (this.state.deepStep === 0) { this.go('demo'); return; } this.setState((s) => ({ deepStep: s.deepStep - 1 })); };
+  deepNext = () => { if (this.state.deepStep >= this.deepSteps.length - 1) { this.go('waiting'); return; } this.setState((s) => ({ deepStep: s.deepStep + 1 })); };
+
+  startActivity = () => this.setState({ phase: 'activity', roundIdx: 0, picks: {}, roundPhase: 'choosing' });
+  goMatch = () => { clearTimeout(this._t); this.setState({ phase: 'match', roundIdx: 0, picks: {}, roundPhase: 'choosing', messages: null, suggestions: null, mayaTyping: false }); };
+
+  helloMatch = () => this.go('match');
+  openConnections = () => this.go('connections');
+  openFriends = () => this.go('friendDiscovery');
+  openClub = () => this.go('club');
+  openCreateBubble = () => this.go('createBubble');
+  openClubChat = () => this.go('clubChat');
+  openHeatmap = () => this.go('heatmap');
+  openSafety = () => this.go('safety');
+  openExperiences = () => this.go('experiences');
+  openProfile = () => this.go('profile');
+  openSettings = () => this.go('settings');
+  goMeet = () => this.setState({ phase: 'meet', meetPhase: 'prompt' });
+  confirmMet = () => this.setState({ meetPhase: 'met' });
+  goChatBack = () => this.go('chat');
+  enterChatFromList = () => {
+    clearTimeout(this._t);
+    if (!this.state.messages || !this.state.messages.length) {
+      this.setState({ phase: 'chat', messages: [{ text: "your round-3 answer is still living in my head rent-free. explain yourself", isMe: false, notMe: true }], suggestions: ['it was a JOKE', 'you first', 'no notes, I stand by it'], mayaTyping: false });
+    } else { this.go('chat'); }
+  };
+
+  pick = (c) => {
+    if (this.state.roundPhase !== 'choosing') return;
+    clearTimeout(this._t);
+    this.setState((s) => ({ picks: { ...s.picks, [s.roundIdx]: c }, roundPhase: 'thinking' }));
+    this._t = setTimeout(() => this.setState({ roundPhase: 'revealed' }), this.pace().think);
+  };
+  next = () => {
+    if (this.state.roundIdx >= this.rounds.length - 1) { this.goChat(); return; }
+    this.setState((s) => ({ roundIdx: s.roundIdx + 1, roundPhase: 'choosing' }));
+  };
+  goChat = () => {
+    clearTimeout(this._t);
+    const r3 = this.state.picks[2];
+    const opener = r3 === 'A'
+      ? "wait — you picked 'twenty minutes early to everything.' I picked 'slide in as the doors close.' I think we just found the whole problem with us and we haven't even said hi"
+      : "ok we BOTH said 'slide in right as the doors close' and honestly that's the most seen I've felt by a stranger in years. we'd never make a reservation on time though";
+    const sugg = r3 === 'A'
+      ? ['in my defense, early = respect', 'YOU explain yourself', "ok... it's a real flaw of mine"]
+      : ['chaos twins', "we're doomed (affectionately)", "name one reservation we'd make on time"];
+    this.setState({ phase: 'chat', messages: [], mayaTyping: true, suggestions: null });
+    this._t = setTimeout(() => this.setState({ messages: [{ text: opener, isMe: false, notMe: true }], mayaTyping: false, suggestions: sugg }), this.pace().reply);
+  };
+  sendSuggestion = (text) => {
+    clearTimeout(this._t);
+    this.setState((s) => ({ messages: [...(s.messages || []), { text, isMe: true, notMe: false }], suggestions: null, mayaTyping: true }));
+    this._t = setTimeout(() => this.setState((s) => ({
+      messages: [...(s.messages || []), { text: "haha ok — I'll allow it. so what are you actually doing this weekend? and 'showing up late to something' is not a real answer", isMe: false, notMe: true }],
+      mayaTyping: false,
+    })), this.pace().reply);
+  };
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    const s = this.state;
+    const phase = s.phase;
+
+    // nav
+    const navSections = this.navSections.map((sec) => ({
+      title: sec.title,
+      items: sec.ids.map((id) => ({
+        label: this.navLabels[id], onClick: () => this.go(id),
+        active: phase === id, inactive: phase !== id,
+      })),
+    }));
+
+    // intent
+    const intentDating = s.intent === 'dating';
+    const intentFriends = s.intent === 'friends';
+    const intentChosen = !!s.intent;
+    const intentLabel = intentDating ? 'Dating' : (intentFriends ? 'Friends & clubs' : '—');
+
+    // demo
+    const di = s.demoIdx;
+    const dr = this.demoRounds[di] || this.demoRounds[0];
+    const dPick = s.demoPicks[di] || null;
+    const dSam = this.demoSam[di];
+    const demoRevealed = s.demoPhase === 'revealed';
+    const cap = this.demoCaptions[di] || { same: '', diff: '' };
+    const demoCaption = dPick ? (dPick === dSam ? cap.same : cap.diff) : '';
+    const demoDots = this.demoRounds.map((_, i) => ({ color: i <= di ? '#DE6F56' : 'rgba(59,45,38,0.15)' }));
+
+    // deep
+    const step = this.deepSteps[s.deepStep] || this.deepSteps[0];
+    const segs = this.deepSteps.map((_, i) => ({ bg: i <= s.deepStep ? '#DE6F56' : 'rgba(59,45,38,0.13)' }));
+    const deepOptions = (step.opts || []).map((o) => {
+      const label = typeof o === 'string' ? o : o.label;
+      const sub = typeof o === 'string' ? '' : (o.sub || '');
+      const selected = step.multi ? (s.deepData[step.key] || []).includes(label) : s.deepData[step.key] === label;
+      return {
+        label, sub, hasSub: !!sub, selected,
+        onClick: () => this.toggleDeep(step.key, label, step.multi),
+        bg: selected ? (step.layout === 'cloud' ? '#DE6F56' : '#FCEFE9') : '#FFFBF4',
+        color: selected ? (step.layout === 'cloud' ? '#FFFBF4' : '#7A3D2C') : '#3B2D26',
+        border: selected ? '2px solid #DE6F56' : '1px solid rgba(59,45,38,0.12)',
+      };
+    });
+    let canNext = true;
+    if (step.layout !== 'text') canNext = step.multi ? (s.deepData[step.key] || []).length > 0 : !!s.deepData[step.key];
+    const lastDeep = s.deepStep >= this.deepSteps.length - 1;
+
+    // activity
+    const round = this.rounds[s.roundIdx] || this.rounds[0];
+    const userPick = s.picks[s.roundIdx] || null;
+    const mayaPick = this.mayaPicks[s.roundIdx];
+    const isRevealed = s.roundPhase === 'revealed';
+    let reactionLine = '';
+    if (isRevealed) { const r = this.reactions[s.roundIdx]; reactionLine = userPick === mayaPick ? (userPick === 'A' ? r.agreeA : r.agreeB) : r.differ; }
+    const lastRound = s.roundIdx >= this.rounds.length - 1;
+    const dots = this.rounds.map((_, i) => ({ color: i <= s.roundIdx ? '#DE6F56' : 'rgba(59,45,38,0.15)' }));
+    let agreed = 0;
+    this.rounds.forEach((_, i) => { if (s.picks[i] && s.picks[i] === this.mayaPicks[i]) agreed++; });
+    const messages = s.messages || [];
+    const suggestions = (s.suggestions || []).map((t) => ({ text: t, onClick: () => this.sendSuggestion(t) }));
+    const r3 = this.rounds[2];
+    const r3You = s.picks[2] === 'A' ? r3.a : (s.picks[2] === 'B' ? r3.b : '—');
+    const r3Maya = this.mayaPicks[2] === 'A' ? r3.a : r3.b;
+
+    // reveal — photo un-blurs as the chat deepens
+    const revealLevel = Math.min(1, 0.16 + messages.length * 0.21);
+    const revealPct = Math.round(revealLevel * 100);
+    const revealBlur = ((1 - revealLevel) * 8).toFixed(1) + 'px';
+    const revealDash = (100.5 * (1 - revealLevel)).toFixed(1);
+    const revealText = revealPct >= 100 ? 'photo fully revealed' : 'photo revealing as you talk \u00b7 ' + revealPct + '%';
+    const readyToMeet = messages.length >= 2;
+
+    // discovery + connections
+    const discoveryCards = this.discovery.map((c) => ({ ...c, onClick: this.helloMatch }));
+    const connectionCards = this.connections.map((c) => ({ ...c, onClick: c.go === 'chat' ? this.enterChatFromList : (c.go === 'activity' ? this.startActivity : this.noop) }));
+
+    return {
+      navSections,
+      isWelcome: phase === 'welcome', isIntent: phase === 'intent', isTiny: phase === 'onboardTiny',
+      isDemo: phase === 'demo', isDeep: phase === 'deep', isWaiting: phase === 'waiting', isBuilding: phase === 'building',
+      isMatch: phase === 'match', isActivity: phase === 'activity', isChat: phase === 'chat',
+      comeIn: this.comeIn, chooseDating: this.chooseDating, chooseFriends: this.chooseFriends,
+      toTiny: this.toTiny, toDemo: this.toDemo, toDeep: this.toDeep, toBuilding: this.toBuilding, enterBuilding: this.enterBuilding, noop: this.noop,
+
+      intentDating, intentFriends, intentLabel,
+      datingBg: intentDating ? '#F7DDD3' : '#FCF7EF', datingBorder: intentDating ? '2px solid #DE6F56' : '1px solid rgba(59,45,38,0.1)',
+      friendsBg: intentFriends ? '#E4E9D8' : '#FCF7EF', friendsBorder: intentFriends ? '2px solid #7E8C6A' : '1px solid rgba(59,45,38,0.1)',
+      intentCtaLabel: intentChosen ? 'Continue  →' : 'Pick one to continue',
+      intentCtaBg: intentChosen ? '#DE6F56' : 'rgba(59,45,38,0.12)', intentCtaColor: intentChosen ? '#FFFBF4' : '#9A8576',
+
+      demoPlaying: s.demoPhase !== 'done', demoDone: s.demoPhase === 'done',
+      demoNum: 'Taste · ' + (di + 1) + ' of ' + this.demoRounds.length, demoDots,
+      demoOptA: dr.a, demoOptB: dr.b,
+      demoPickedA: dPick === 'A', demoPickedB: dPick === 'B',
+      demoSamA: demoRevealed && dSam === 'A', demoSamB: demoRevealed && dSam === 'B',
+      demoThinking: s.demoPhase === 'thinking', demoRevealed,
+      demoCaption, demoNextLabel: di < this.demoRounds.length - 1 ? 'One more  →' : 'See what just happened  →',
+      demoPickA: () => this.demoPick('A'), demoPickB: () => this.demoPick('B'), demoNext: this.demoNext,
+
+      deepTitle: step.title, deepSub: step.sub, deepProgress: 'Step ' + (s.deepStep + 1) + ' of ' + this.deepSteps.length,
+      segs, isCloud: step.layout === 'cloud', isStack: step.layout === 'stack', isTextStep: step.layout === 'text',
+      deepText: s.deepData.saturday, deepOptions, hasFootnote: !!step.footnote, deepFootnote: step.footnote || '',
+      deepBack: this.deepBack, deepNextAction: canNext ? this.deepNext : this.noop,
+      deepNextLabel: lastDeep ? 'See who is waiting  →' : 'Continue',
+      deepNextBg: canNext ? '#3B2D26' : 'rgba(59,45,38,0.16)', deepNextColor: canNext ? '#F6EEE3' : '#9A8576',
+
+      roundLabel: round.label, optA: round.a, optB: round.b, dots,
+      isThinking: s.roundPhase === 'thinking', isRevealed,
+      isPickedA: userPick === 'A', isPickedB: userPick === 'B',
+      showMayaA: isRevealed && mayaPick === 'A', showMayaB: isRevealed && mayaPick === 'B',
+      reactionLine, nextLabel: lastRound ? 'Open the chat  →' : 'Next round  →',
+      recapText: 'Would You Rather  ·  you agreed on ' + agreed + ' of 5',
+      r3You, r3Maya, showRecap: this.props.showRecapCard ?? true,
+      messages, mayaTyping: !!s.mayaTyping, suggestions, showSuggestions: suggestions.length > 0,
+      startActivity: this.startActivity, pickA: () => this.pick('A'), pickB: () => this.pick('B'), next: this.next, goMatch: this.goMatch,
+      isDiscovery: phase === 'discovery', isConnections: phase === 'connections', isMeet: phase === 'meet',
+      isFriendDiscovery: phase === 'friendDiscovery', isClub: phase === 'club', isCreateBubble: phase === 'createBubble', isClubChat: phase === 'clubChat',
+      isHeatmap: phase === 'heatmap', isSafety: phase === 'safety', isExperiences: phase === 'experiences', isProfile: phase === 'profile', isSettings: phase === 'settings',
+      meetPrompt: s.meetPhase === 'prompt', meetDone: s.meetPhase === 'met',
+      discoveryCards, connectionCards,
+      revealBlur, revealDash, revealText, readyToMeet,
+      helloMatch: this.helloMatch, openConnections: this.openConnections, openFriends: this.openFriends,
+      openClub: this.openClub, openCreateBubble: this.openCreateBubble, openClubChat: this.openClubChat,
+      openHeatmap: this.openHeatmap, openSafety: this.openSafety, openExperiences: this.openExperiences,
+      openProfile: this.openProfile, openSettings: this.openSettings,
+      goMeet: this.goMeet, confirmMet: this.confirmMet, goChatBack: this.goChatBack, enterChatFromList: this.enterChatFromList,
+    };
+  }
+}
+</script>
+</body>
+</html>
