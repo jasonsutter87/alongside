@@ -1,4 +1,4 @@
-baseURL = 'https://alongside.dating/'
+baseURL = 'https://alongside-dating.netlify.app/'
 languageCode = 'en-us'
 title = 'Alongside'
 
@@ -12,4 +12,4 @@ description = "A connection app where you're seen, known, and heard — built in
 baseURL = 'http://localhost:1313/'
 
 [environments.production]
-baseURL = 'https://alongside.dating/'
+baseURL = 'https://alongside-dating.netlify.app/'
