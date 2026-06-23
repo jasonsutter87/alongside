@@ -374,3 +374,80 @@ Design these screens:
 21. Settings — intent switching, subscription, privacy.
 ```
 
+---
+
+## 10. Session 2 decisions (2026-06-22, evening) — the connection engine + the wild map
+
+*Captured live. Some of this supersedes/sharpens earlier sections; noted where it does.*
+
+### 10.1 The reveal, resolved — welded to the game (supersedes the standalone Mechanic D)
+The blind-photo idea is NOT a separate gated feature anymore. It is **fused into the First Five Minutes**:
+- You start **blind** — the partner is a flat colour dot.
+- As you BOTH answer ~5 light "would you rather" rounds, the photo **progressively resolves** (blur→clear), stopping at **~85%**.
+- Then a **match / no-match** decision. **Full 0-blur reveal only on mutual match.**
+- **Reframe that defuses the S'More death:** it is no longer "a blind dating app" (the scary, adverse-selecting frame). It's *"play a 2-min game; the face is the reward for playing."* The willingness-to-start cliff softens (the ask is "play," not "date blind"); the reveal-cliff dies (resolution is gradual, a byproduct of fun, never a binary big-reveal).
+- **Honest caveat (per Visionary):** this defuses the *reveal-cliff*, not the *adverse-selection* supply skew. We ACCEPT a skewed pool because the skew points toward our actual customer (people tired of being judged on a photo). Do not call it "solved"; call it a trade we chose. Test before prod: would 5 conventionally-attractive people play it *twice*?
+- Built + working as `first-five-minutes.html`.
+
+### 10.2 Question design — threads, not nouns
+- **Rule:** a question must surface a **thread** (a story / value / small confession you have to *explain*), never a **noun** ("you like music? me too!" = dead end).
+- Grounded in **self-disclosure reciprocity** (Aron's "36 Questions"). The app is a **disclosure ramp**, not an interest-matcher.
+- **Core principle / candidate tagline: "Nobody has to carry the conversation."** People happily answer interview-type questions IF they're rapid-fire and they are NOT the one hosting. **The app is the host so neither human has to be.** The moment a screen asks a user to *generate* text instead of *react*, the magic is lost.
+
+### 10.3 Deep rounds — learning, not scoring
+- Post-connection deep questions (1–6 values scale) are **not a compatibility %.** They teach you *who the person is and how they handle conflict.*
+- Difference is framed as **"a rhythm you'd learn,"** never a demerit. Turns values-questions from a filter/gate into a **relationship skill.** (Best single idea of the session per Visionary; also sidesteps the bias landmine in Mechanic D, tension #1.)
+
+### 10.4 Positioning + brand spine
+- **Spine:** *"a community where you're seen, known, and heard."* (Direct antidote to the origin insight in Section 0.)
+- **Lead tagline:** *"Nobody has to carry the conversation."* (Preferred over "matched on how deeply you want to be known" — the latter risks recruiting the *exhausted/depleted*, who are bad at the vulnerability the app needs.)
+- **Match on depth-willingness, not interests** — but **inferred from behaviour in the First Five, never self-reported** (everyone claims "deep"; self-report collapses to noise).
+
+### 10.5 Flow + the depth dial (trims the over-built version)
+- **Flow:** mandatory First Five (framed as *the experience/demo*, not a form) → match → deepening conversation → open chat unlocks LAST (so nobody ever faces an empty text box; free chat is the *reward*, not the test).
+- **Depth is a temperature, not a visible staircase.** Keep tiers as an *internal* model for which questions surface; the user must NEVER see "rung 2 of 3" (that re-creates a score).
+- **Pulling back is silent, free, and invisible** — implemented as a property of the conversation (it just *cools*; no event fires; never shows who pulled back), NOT a per-rung "bail" button (a visible bail button advertises danger and teaches a high-stakes climb).
+- **Sunk-cost guardrail:** the First Five investment (IKEA effect) makes people more willing to go deeper — good. But it must create **willingness, not obligation.** Quitting must stay genuinely cheap (a soft landing). *"Engagement engine and ethics are the same lever pointed opposite directions; keep quitting cheap."*
+
+### 10.6 The model — served concierge, not a browse marketplace
+- **No discovery feed.** The app is a **matchmaker that serves you** a daily queue of blind First Fives — you're never shown an empty room because you're never shown the room.
+- **Async First Fives** (you answer your 5, they answer theirs whenever; dot resolves when both halves complete). Async is what makes a daily drip ("~10/day" aspirational) work without coincident presence — and it defuses the cold-start *timing* problem. (Sync "play live now" mode is a later add once density exists.)
+
+### 10.7 Cold-start — honest light pool, no bots (the stance)
+- **Every connection app has a seed problem unless it blitzes major cities.** So don't hide it — wear it.
+- **Be honest with early users: the pool is light, and every person is REAL.** *"We will never pad it with bots, fake profiles, or ghosts."* This is the **inverse of the industry's faked-liquidity** (Match Group's fake-profile lawsuits, universal bot-seeding) — a trust position incumbents can't copy. Makes the Section 8c anti-bot architecture into a *marketing line.*
+- **Honesty buys patience, not liquidity.** Pair it with **concentration:** light-but-dense in ONE place/community beats light-spread-thin everywhere. A friends-club / singles-event is the densest seed atom.
+
+### 10.8 Acquisition + monetization — events + the wild map
+- **Seed via real in-person singles events** (concentrated, dense, honest). This is the structural cold-start answer (the denominator, not just the numerator).
+- **North-Star feature: "approach in public — not the app experience."** The app's job is to dissolve into real life. Get people OFF the app, into a real moment.
+- **Monetization (at launch):** flat **pay-to-date access** (never pay-per-match / pay-to-see-people = Bergen paywall) + partner-venue experience commerce.
+- **The wild map is NOT a launch pillar.** It is a **post-density consequence** — it can only be non-empty once events have created standing density, and its k-anonymity floor *guarantees a blank/cold map until then.* A cold-everywhere map broadcasts emptiness (the exact "empty room" wound the served-concierge model removes). So the map ships *after* the core proves out and density exists (consistent with 10.9 sequencing and original Section 5 "build last"); it is a someday-reward and a later revenue layer, never an early lever. **Resolves the 10.8↔10.9 contradiction flagged in review #3.**
+
+### 10.9 The wild map — SAFETY-CRITICAL spec (sharpens Section 5)
+Decided model: **density of PLACES, never identity of PEOPLE.** "This venue is alive tonight," never "that single is here."
+- **Venue-anchored check-in (2010 Facebook Places / Foursquare model):** you check into a curated list of **public** venues — you do NOT broadcast raw GPS. **Home is not a checkable place** → you structurally cannot broadcast from your couch. (Borrow Places' venue-list + check-in UX; fix its sins: **self-only** — no one can check *you* in; **ephemeral** — no location history.)
+- **k-anonymity density floor at EVERY zoom:** never render a cell with fewer than ~5 broadcasting people; below threshold shows **cold/empty even if someone's there.** Cap max zoom so the smallest cell is a *neighbourhood/venue, never a street corner.* The zoom is the attack — a blob you can zoom into until it's 1 person is a pin. **This floor also makes home-broadcast pointless** (residential cells never hit 5) → safety mechanism and product goal are the SAME mechanism (map only warms where crowds already gather: bars, parks, events).
+- **Opt-in, proximity-anchored, auto-off:** turn on at a venue; **auto-off when you leave (~1-mile radius);** expiring, not continuous. No trail, no reverse-lookup to where you live.
+- **Approach-preferences stay OFF the public map.** "How I want to be approached" is a *personal* signal revealed only **in person / on mutual consent** — never painted over geography (that draws a target, not an invitation). The map gets you *to the room;* the *how* happens *in* the room, on their terms.
+- **No animation, coarse time buckets** — never let anyone watch a blob move and infer a path.
+- **Sequencing:** even the safe version ships **after** events + First Five prove out (per original Section 5: highest risk, build last). Let events seed the density, THEN light up the (density-only) map.
+
+#### 10.9a Live mode refinements (added 2026-06-22) — "a SIGNAL, not a profile"
+The single clearest articulation of why the wild map is safe. **Live is a presence *signal* for people already out in the world — never a window into a person.**
+
+- **Two distinct modes for two states:** (a) **Core app** — you're at home, you want to be *matched & served*, depth-first, async; profile + First Five + deepening live here, behind the earned reveal. (b) **Live** — you're *already out and open*, you want a lightweight ambient "there's energy here, come say hi." Deliberately thin: no profiles, no photos, no names — only *energy + one optional trait*.
+- **Why it's structurally safe (the load-bearing argument):** a stalking tool requires **identity + precise location + persistence.** Live is designed to have **none of the three** — *aggregate not identity* (you're "someone here," never findable), *fuzzed not location* (¼-mile grid, never a point), *ephemeral not persistent* (duration-based, auto-off, no trail). Remove all three and the feature is *structurally incapable* of being a stalk tool. That's what makes it safe for the woman already outside.
+- **The data-exposure inversion:** normal apps make you build a rich, permanent, stalk-able profile just to *maybe* meet someone. Live lets you meet someone with **near-zero data exposure** — "I'm out, I'm open, here's one optional thread." For someone already at the lake and open to it, it's the *lowest-exposure* way to be approachable that exists — less exposed than swiping, not more.
+- **GPS-derived venue list:** the check-in list is generated from **public POIs near your actual GPS** (parks/trails/cafés/bars/gyms/events — *residential categories filtered out*). **Raw coordinates never leave the device** (GPS in → venue out; only the chosen, already-public, already-fuzzed venue is shared). Safety feature, not just UX: home is never in the list → home-broadcast impossible by construction; sparse spots simply stay cold (k-anonymity). Example (founder at Folsom Lake): list = Beals Point / lake walkway / trailhead / Granite Bay beach.
+- **Trait-as-icebreaker = the load-bearing social design:** the optional exposed trait is shown at the **area/aggregate level** ("*someone* here is training for a marathon"), never attached to an identifiable person. It converts the in-person approach from *"I'm interested in your body"* → *"I'm interested in your thing."* Effects: (1) **discreet & dignified** — "Are you training for a marathon?" is askable by anyone of anyone, never reads as a come-on; (2) **consented** — they chose to expose the trait, so being approached about it is *invited* (vs. judged on looks they didn't put forward); (3) **no-fault / deniable** — no spark → it stays about the marathon, both walk away clean, no rejection sting (this deniability is what makes people brave enough to approach); (4) **de-risks women's safety** — strips sexual intent out of the cold approach, the single biggest reason someone opts into being findable-as-energy; (5) you're given *a reason to talk to anyone*, NOT a target — the right person self-identifies when asked. It's "nobody has to carry the conversation," extended into real life.
+
+### 10.10b Two more decisions (2026-06-22, post review #3)
+- **DATING-FIRST, not friends-first (DECIDED).** Reverses the Visionary's "lead with friends" wedge. Rationale: it's the product the founder actually wants and will use (user #1 is here to date). **Eyes-open trade:** friends-mode was the *structural* cold-start solution (denser, shareable, lower-stakes); choosing dating-first means the seeding burden falls **entirely on events + distribution**, with no friends-wedge cushion. Accepted because the founder has no network to run a friends-seed through anyway, and is committed to build-it-then-seed via the app itself. Friends-mode stays on the roadmap as a *later* density engine, not the launch.
+- **Free first, charge after ~a few months (DECIDED).** Launch **free** (don't charge admission to an empty/light room — §10.7); introduce the flat pay-to-date access fee only once there's real density/value to pay for. Correct sequencing: monetize the *win*, after the room is worth entering. No feature-gating ever (§8d hard rule still holds).
+
+### 10.10 Open / unresolved after this session
+- **Sync vs async First Five — DECIDED (2026-06-22): sync-first, async fallback.** Live co-play is the soul ("shoulder-to-shoulder, in real time" = the thing that makes it not an interview). The seed channel supplies sync's only missing ingredient *for free*: a singles **event is a room of people present at the same time**, so co-presence is trivial there. Default = play LIVE together now; **async is the graceful-degrade fallback** ("they're not online — leave your answers, it resolves when they play"), never the default. This avoids letting the supply problem pick the product. (Earlier draft leaned async for liquidity; reversed after review #3 — events solve sync's coincident-presence weakness without a city-wide always-on pool.)
+- **Do you have a specific real seed community/city?** (The knockout card for the cold-start debate — still unanswered.)
+- **The supply test, not another design session:** can you get ~20 real intended-users to ONE in-person event you host? That's the next move; everything tonight was supply-*quality*, not supply-*existence*. Bottleneck was never the First Five Minutes — it's the First Fifty People.
+

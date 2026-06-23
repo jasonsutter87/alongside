@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alongside — The First Five Minutes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500&display=swap');
+
+  :root{
+    --cream:#efe6d8;
+    --cream-deep:#e7dccb;
+    --paper:#f6efe4;
+    --ink:#3a322b;
+    --ink-soft:#8a7d6d;
+    --rose:#f3d9d4;
+    --rose-ink:#9c5d52;
+    --sage:#dde4d3;
+    --sage-ink:#5f7152;
+    --terra:#d98b6b;
+    --terra-deep:#c9734f;
+    --line:#e0d4c1;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--cream);
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:32px;color:var(--ink);
+  }
+  .stage{display:flex;flex-direction:column;align-items:center;gap:18px}
+
+  /* phone */
+  .phone{
+    width:390px;height:800px;background:var(--paper);
+    border-radius:46px;position:relative;overflow:hidden;
+    box-shadow:0 40px 80px -30px rgba(80,60,40,.45),0 0 0 11px #ded2bf,0 0 0 13px #cdbfa8;
+  }
+  .statusbar{
+    height:52px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 30px;font-size:14px;font-weight:600;color:var(--ink);
+    position:relative;z-index:5;
+  }
+  .notch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:118px;height:30px;background:#1c1714;border-radius:18px}
+  .bars{display:flex;gap:5px;align-items:center;font-size:12px;letter-spacing:1px}
+
+  .screen{padding:6px 26px 0;height:calc(100% - 52px);display:flex;flex-direction:column;position:relative}
+
+  /* top reveal bar */
+  .partner{
+    display:flex;align-items:center;gap:12px;
+    background:rgba(255,255,255,.45);border:1px solid var(--line);
+    border-radius:16px;padding:11px 14px;margin-bottom:18px;
+  }
+  .partner .who{font-size:13px;color:var(--ink-soft);line-height:1.45}
+  .partner .who b{color:var(--ink);font-weight:600}
+
+  /* the resolving dot */
+  .dotwrap{position:relative;width:46px;height:46px;flex:0 0 46px}
+  .dot{
+    width:46px;height:46px;border-radius:50%;overflow:hidden;position:relative;
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.6),0 2px 8px -2px rgba(120,90,60,.4);
+  }
+  .dot .face{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+    background:#caa86a;
+    /* starts as a flat colour disc */
+    filter:blur(13px) saturate(0) brightness(1.02);
+    transform:scale(1.25);
+    transition:filter 1.1s cubic-bezier(.4,0,.2,1),transform 1.1s cubic-bezier(.4,0,.2,1);
+  }
+  .dot .veil{
+    position:absolute;inset:0;background:#caa86a;mix-blend-mode:color;
+    opacity:1;transition:opacity 1.1s ease;
+  }
+  .ring{
+    position:absolute;inset:-5px;border-radius:50%;
+    background:conic-gradient(var(--terra) var(--p,0%),transparent 0);
+    -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));
+            mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 3px));
+    opacity:.85;transition:--p .8s ease;
+  }
+
+  .roundlabel{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--terra-deep);font-weight:600;margin-bottom:2px}
+  .pips{display:flex;gap:6px;margin-left:auto}
+  .pip{width:7px;height:7px;border-radius:50%;background:var(--line)}
+  .pip.on{background:var(--terra)}
+  .rowtop{display:flex;align-items:center;margin-bottom:42px}
+
+  .prompt{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:400;
+    color:var(--terra-deep);font-size:22px;text-align:center;margin-bottom:30px;
+  }
+
+  .opt{
+    border-radius:20px;padding:24px 22px;font-family:'Fraunces',serif;
+    font-size:19px;line-height:1.32;color:var(--ink);cursor:pointer;
+    border:1.5px solid transparent;transition:transform .18s ease,box-shadow .18s ease,border-color .18s;
+    user-select:none;
+  }
+  .opt:active{transform:scale(.98)}
+  .opt.rose{background:var(--rose)}
+  .opt.sage{background:var(--sage)}
+  .opt.picked{border-color:var(--terra);box-shadow:0 8px 22px -10px rgba(201,115,79,.6)}
+  .or{display:flex;align-items:center;justify-content:center;margin:13px 0}
+  .or span{width:34px;height:34px;border-radius:50%;background:var(--paper);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-style:italic;
+    font-size:14px;color:var(--ink-soft)}
+
+  .echo{
+    text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:24px;
+    min-height:20px;opacity:0;transition:opacity .5s ease;font-style:italic;
+  }
+  .echo.show{opacity:1}
+
+  /* match decision */
+  .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+  .bigdot{width:138px;height:138px;margin-bottom:8px}
+  .bigdot .dot{width:138px;height:138px}
+  .bigdot .dot .face{filter:blur(5px) saturate(.55)} /* ~85% resolved going into decision */
+  .bigdot .veil{opacity:.32}
+  h1{font-family:'Fraunces',serif;font-weight:500;font-size:27px;line-height:1.2;margin:6px 0 2px}
+  .sub{font-size:14px;color:var(--ink-soft);line-height:1.55;max-width:280px;margin:0 auto 6px}
+  .why{
+    background:rgba(255,255,255,.5);border:1px solid var(--line);border-radius:16px;
+    padding:14px 16px;font-family:'Fraunces',serif;font-size:14.5px;font-style:italic;
+    color:var(--ink);line-height:1.45;max-width:300px;margin:10px auto 0;
+  }
+  .why b{font-style:normal;color:var(--rose-ink)}
+
+  .actions{display:flex;flex-direction:column;gap:11px;width:100%;padding:0 4px 30px}
+  .btn{
+    border:none;border-radius:18px;padding:17px;font-size:16px;font-weight:600;
+    font-family:'Inter';cursor:pointer;transition:transform .15s,box-shadow .15s;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--terra);color:#fff;box-shadow:0 10px 24px -10px rgba(201,115,79,.75)}
+  .btn.ghost{background:transparent;color:var(--ink-soft);font-weight:500}
+
+  /* full reveal — match */
+  .reveal .dot .face{filter:blur(0) saturate(1) brightness(1)!important;transform:scale(1)!important}
+  .reveal .veil{opacity:0!important}
+  .reveal .bigdot{width:150px;height:150px}
+  .reveal .bigdot .dot{width:150px;height:150px}
+  .heart{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--terra-deep);font-weight:600}
+
+  .fade{animation:fade .55s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .restart{font-size:13px;color:var(--ink-soft);cursor:pointer;border:none;background:none;text-decoration:underline;text-underline-offset:3px}
+  .caption{font-size:12.5px;color:var(--ink-soft);text-align:center;max-width:390px;line-height:1.5}
+
+  /* ---- 1–6 values scale ---- */
+  .poles{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft);
+    text-transform:uppercase;letter-spacing:1px;margin:2px 2px 12px}
+  .scale{display:flex;flex-direction:column;gap:9px}
+  .lvl{
+    display:flex;align-items:center;gap:13px;border-radius:15px;padding:14px 15px;cursor:pointer;
+    background:rgba(255,255,255,.42);border:1.5px solid var(--line);
+    transition:transform .15s,border-color .15s,background .15s;
+  }
+  .lvl:active{transform:scale(.99)}
+  .lvl:hover{background:rgba(255,255,255,.7)}
+  .lvl .num{
+    flex:0 0 30px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-size:15px;color:var(--ink-soft);
+    background:var(--cream);border:1px solid var(--line);transition:all .15s;
+  }
+  .lvl .lbl{font-family:'Fraunces',serif;font-size:15.5px;line-height:1.3;color:var(--ink)}
+  .lvl.picked{border-color:var(--terra);background:rgba(217,139,107,.12)}
+  .lvl.picked .num{background:var(--terra);color:#fff;border-color:var(--terra)}
+
+  /* result of a scale round */
+  .meter{display:flex;gap:5px;justify-content:center;margin:14px 0 4px}
+  .seg{width:38px;height:8px;border-radius:5px;background:var(--line)}
+  .seg.you{background:var(--terra)}
+  .seg.her{background:var(--sage-ink)}
+  .seg.both{background:linear-gradient(90deg,var(--terra),var(--sage-ink))}
+  .legend{display:flex;gap:16px;justify-content:center;font-size:12px;color:var(--ink-soft);margin-top:4px}
+  .legend i{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+  .legend .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+  /* ---- connected hub ---- */
+  .hubhead{display:flex;align-items:center;gap:14px;margin:8px 0 22px}
+  .hubhead .dotwrap{flex:0 0 58px}
+  .hubhead .dot{width:58px;height:58px}
+  .hubhead h2{font-family:'Fraunces',serif;font-weight:500;font-size:22px;line-height:1.1}
+  .hubhead .stat{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .card{
+    display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.5);
+    border:1px solid var(--line);border-radius:18px;padding:17px 18px;margin-bottom:11px;cursor:pointer;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .card:active{transform:scale(.99)}
+  .card:hover{box-shadow:0 8px 20px -12px rgba(120,90,60,.4)}
+  .card .ic{font-size:21px;flex:0 0 30px;text-align:center}
+  .card .ct{flex:1}
+  .card .ct b{font-family:'Fraunces',serif;font-weight:500;font-size:16px;display:block}
+  .card .ct span{font-size:12.5px;color:var(--ink-soft)}
+  .card .arr{color:var(--ink-soft);font-size:18px}
+
+  /* ---- past answers ---- */
+  .back{border:none;background:none;color:var(--ink-soft);font-size:14px;cursor:pointer;
+    margin:6px 0 14px;padding:0;display:flex;align-items:center;gap:6px}
+  .qa{background:rgba(255,255,255,.45);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:11px}
+  .qa .qq{font-family:'Fraunces',serif;font-style:italic;color:var(--terra-deep);font-size:14px;margin-bottom:10px}
+  .qa .ans{display:flex;gap:10px;font-size:13.5px;margin-bottom:6px;align-items:flex-start}
+  .qa .ans:last-child{margin-bottom:0}
+  .qa .ans .nm{flex:0 0 42px;font-weight:600;color:var(--ink-soft)}
+  .qa .ans .vv{flex:1;color:var(--ink);font-family:'Fraunces',serif}
+  .qa .match{margin-top:9px;font-size:12px;color:var(--sage-ink);font-weight:500}
+  .qa .match.diff{color:var(--rose-ink)}
+  .scroll{overflow-y:auto;flex:1;margin:0 -4px;padding:0 4px}
+  .scroll::-webkit-scrollbar{width:0}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="bars">●●●● &nbsp;✦ &nbsp;▮▮▮</span>
+    </div>
+    <div class="screen" id="screen"></div>
+  </div>
+  <button class="restart" onclick="start()">↺ replay</button>
+  <p class="caption">The dot resolves as you both play. It stops at ~85% — the match earns the last of it.</p>
+</div>
+
+<script>
+// ---- partner portrait ----
+const FACE_SRC = "https://randomuser.me/api/portraits/women/22.jpg";
+// soft fallback if the network image is blocked, so you still see a face resolve
+const FALLBACK_SRC = "data:image/svg+xml," + encodeURIComponent(`
+<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>
+  <rect width='200' height='200' fill='#e7c49a'/>
+  <circle cx='100' cy='86' r='44' fill='#f0cda6'/>
+  <path d='M28 200 C28 150 70 128 100 128 C130 128 172 150 172 200 Z' fill='#caa06f'/>
+  <ellipse cx='84' cy='84' rx='5' ry='7' fill='#3a2a22'/>
+  <ellipse cx='116' cy='84' rx='5' ry='7' fill='#3a2a22'/>
+  <path d='M86 108 q14 12 28 0' stroke='#a85' stroke-width='4' fill='none' stroke-linecap='round'/>
+</svg>`);
+
+// her = Maya's own answer ('a' or 'b')
+const ROUNDS = [
+  {q:'A night that drifts till 2am, or home by ten?', a:'A night that drifts till 2am at a diner', b:'Home by ten with tea and a good book',
+   her:'b', echo:'You said diner. Maya picked the book — "someone has to drag the other out."'},
+  {q:'Know every road, or get lost?', a:'Know every road on the map', b:'Get pleasantly, completely lost',
+   her:'b', echo:'You both chose lost. Suspicious.'},
+  {q:'The same ten books, or only new ones?', a:'Reread the same ten books forever', b:'Only new books — some you\'ll hate',
+   her:'a', echo:'Split. Maya will be defending this in round 4, guaranteed.'},
+  {q:'Sing badly and loud, or hum to yourself?', a:'Sing badly and loudly', b:'Hum perfectly, to yourself',
+   her:'a', echo:'You said loud. She said she\'d harmonise.'},
+  {q:'First pancake, or wait for the perfect one?', a:'The first pancake, slightly wrong', b:'Wait for the perfect one',
+   her:'a', echo:'You both took the first pancake. That\'s basically a personality match.'},
+];
+
+// ---- deeper rounds: 1–6 values scale (unlocked after connecting) ----
+// her = where Maya landed (1–6)
+const DEEP = [
+  {tag:'Going deeper · 1',
+   q:'When you and someone close land on opposite sides of a political or moral line — how do you want to move through it?',
+   lo:'Open to difference', hi:'Need alignment', her:3,
+   herInsight:"Maya can sit with disagreement — but only where she feels respected. Push without that, and she'll close the door.",
+   levels:[
+     'We can talk about anything — difference is genuinely interesting to me.',
+     'I love a good debate. Disagreeing well brings me closer, not further.',
+     'I can hold space for it, as long as there\'s real respect on both sides.',
+     'Some topics I\'d rather we tread lightly around.',
+     'I\'d honestly rather those conversations just didn\'t come up.',
+     'I\'d only feel at home with someone who feels what I feel.',
+   ]},
+  {tag:'Going deeper · 2',
+   q:'How much of yourself do you want to share before you fully trust someone?',
+   lo:'Open early', hi:'Slow to open', her:4,
+   herInsight:"She holds the deeper things back until she's sure. Don't read early reserve as distance — it's how she protects what matters.",
+   levels:[
+     'I\'m an open book from day one — what you see is what you get.',
+     'I share easily; trust catches up as we go.',
+     'A bit at a time, as it\'s earned.',
+     'I keep the deeper stuff back until I\'m sure.',
+     'It takes me a long while to really let someone in.',
+     'Very few people ever get all the way in. That\'s by design.',
+   ]},
+  {tag:'Going deeper · 3',
+   q:'When things get hard between two people, what do you reach for first?',
+   lo:'Talk it out now', hi:'Need space first', her:2,
+   herInsight:"Maya wants to mend things early and calmly — she won't let a rift set. Silence will read to her as the problem getting worse.",
+   levels:[
+     'Talk it out immediately — I can\'t rest until we\'re okay.',
+     'Address it soon, calmly, before it sets.',
+     'A short pause, then we talk.',
+     'I need real space before I can say anything useful.',
+     'I retreat for a while; pushing makes it worse.',
+     'I tend to go quiet and sort it out on my own.',
+   ]},
+];
+
+const screen = document.getElementById('screen');
+let round = 0, picks = [], log = [], deepLog = [], matched = false;
+
+function dotHTML(big){
+  return `<div class="dotwrap ${big?'bigdot':''}">
+    <div class="dot" id="dot">
+      <img class="face" id="face" src="${FACE_SRC}" alt="" onerror="this.onerror=null;this.src='${FALLBACK_SRC}'">
+      <div class="veil" id="veil"></div>
+    </div>
+  </div>`;
+}
+
+// resolve level 0..1  -> blur & saturation
+function setResolve(level){
+  const face=document.getElementById('face');
+  const veil=document.getElementById('veil');
+  if(!face) return;
+  const blur=(1-level)*13;          // 13px -> 0
+  const sat=level;                  // 0 -> 1
+  const scale=1.25-(level*0.25);
+  face.style.filter=`blur(${blur}px) saturate(${sat}) brightness(${1.02-level*0.02})`;
+  face.style.transform=`scale(${scale})`;
+  if(veil) veil.style.opacity=(1-level);
+}
+
+function renderRound(){
+  const r=ROUNDS[round];
+  const pips=ROUNDS.map((_,i)=>`<div class="pip ${i<=round?'on':''}"></div>`).join('');
+  screen.className='screen';
+  screen.innerHTML=`
+    <div class="partner fade">
+      ${dotHTML(false)}
+      <div class="who">A quick taste with <b>Maya</b>. You're getting to know each other<br>by playing — not by interviewing.</div>
+    </div>
+    <div class="rowtop">
+      <div>
+        <div class="roundlabel">Round ${round+1} of ${ROUNDS.length}</div>
+      </div>
+      <div class="pips">${pips}</div>
+    </div>
+    <div class="prompt fade">${r.q}</div>
+    <div class="opt rose" id="oa">${r.a}</div>
+    <div class="or"><span>or</span></div>
+    <div class="opt sage" id="ob">${r.b}</div>
+    <div class="echo" id="echo"></div>
+  `;
+  // resolve the dot to where we are (each completed round adds ~17%, cap ~85%)
+  requestAnimationFrame(()=>setResolve(Math.min(0.85, round*0.17)));
+
+  document.getElementById('oa').onclick=()=>pick('a');
+  document.getElementById('ob').onclick=()=>pick('b');
+}
+
+function pick(side){
+  const oa=document.getElementById('oa'), ob=document.getElementById('ob');
+  oa.onclick=ob.onclick=null;
+  (side==='a'?oa:ob).classList.add('picked');
+  picks.push(side);
+  const r=ROUNDS[round];
+  log.push({q:r.q, you:side, her:r.her,
+    youText:(side==='a'?r.a:r.b), herText:(r.her==='a'?r.a:r.b)});
+  // advance the dot one notch as the round completes
+  setResolve(Math.min(0.85,(round+1)*0.17));
+  const echo=document.getElementById('echo');
+  echo.textContent=ROUNDS[round].echo;
+  echo.classList.add('show');
+  setTimeout(()=>{
+    round++;
+    if(round<ROUNDS.length) renderRound();
+    else renderDecision();
+  },1450);
+}
+
+function renderDecision(){
+  screen.className='screen';
+  screen.innerHTML=`
+    <div class="center fade">
+      ${dotHTML(true)}
+      <div class="heart">5 rounds in</div>
+      <h1>So — that was Maya.</h1>
+      <div class="sub">You know how she argues, what makes her laugh, and that she takes the first pancake. You almost know her face.</div>
+      <div class="why"><b>Why you two:</b> you both flagged <i>Tomorrow, and Tomorrow, and Tomorrow</i> — and you're both marathon-training this spring.</div>
+    </div>
+    <div class="actions fade">
+      <button class="btn primary" onclick="reveal()">Match with Maya</button>
+      <button class="btn ghost" onclick="noMatch()">Not this time</button>
+    </div>
+  `;
+  requestAnimationFrame(()=>setResolve(0.85));
+}
+
+function reveal(){
+  matched=true;
+  screen.className='screen reveal';
+  screen.innerHTML=`
+    <div class="center fade">
+      ${dotHTML(true)}
+      <div class="heart">It's a match</div>
+      <h1>Hi, Maya.</h1>
+      <div class="sub">You earned the whole picture. Now go pull the thread you already started — that pancake debate isn't over.</div>
+    </div>
+    <div class="actions fade">
+      <button class="btn primary" onclick="hub()">Continue</button>
+    </div>
+  `;
+  requestAnimationFrame(()=>{setResolve(1); setTimeout(()=>setResolve(1),50);});
+}
+
+/* ---------- connected hub ---------- */
+function hub(){
+  screen.className='screen reveal';
+  const deeperDone=deepLog.length;
+  screen.innerHTML=`
+    <div class="hubhead fade">
+      ${dotHTML(false)}
+      <div>
+        <h2>Connected with Maya</h2>
+        <div class="stat">${log.length+deeperDone} questions in · ${matchCount()} aligned</div>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="card fade" onclick="startDeeper()">
+        <div class="ic">🌿</div>
+        <div class="ct"><b>Go a little deeper</b><span>${deeperDone? 'A few more — the ones that matter':'New rounds, now that you\'ve met'}</span></div>
+        <div class="arr">›</div>
+      </div>
+      <div class="card fade" onclick="pastAnswers()">
+        <div class="ic">📖</div>
+        <div class="ct"><b>Your answers so far</b><span>See where you two lined up — and didn't</span></div>
+        <div class="arr">›</div>
+      </div>
+      <div class="card fade" onclick="alert('→ opens the conversation, already mid-thread')">
+        <div class="ic">💬</div>
+        <div class="ct"><b>Message Maya</b><span>Pick up the thread you started playing</span></div>
+        <div class="arr">›</div>
+      </div>
+      <div class="card fade" onclick="start()">
+        <div class="ic">↺</div>
+        <div class="ct"><b>Replay from the top</b><span>Meet a new demo partner</span></div>
+        <div class="arr">›</div>
+      </div>
+    </div>
+  `;
+  requestAnimationFrame(()=>setResolve(1));
+}
+
+function matchCount(){
+  let n=0;
+  log.forEach(e=>{ if(e.you===e.her) n++; });
+  deepLog.forEach(e=>{ if(Math.abs(e.you-e.her)<=1) n++; });
+  return n;
+}
+
+/* ---------- deeper: 1–6 values scale ---------- */
+let deepIdx=0;
+function startDeeper(){ deepIdx=0; renderScale(); }
+
+function renderScale(){
+  if(deepIdx>=DEEP.length){ hub(); return; }
+  const d=DEEP[deepIdx];
+  screen.className='screen';
+  const rows=d.levels.map((t,i)=>`
+    <div class="lvl" data-v="${i+1}">
+      <div class="num">${i+1}</div><div class="lbl">${t}</div>
+    </div>`).join('');
+  screen.innerHTML=`
+    <div class="partner fade">
+      ${dotHTML(false)}
+      <div class="who">Going deeper with <b>Maya</b>. No wrong answers —<br>this is just where you each actually stand.</div>
+    </div>
+    <div class="rowtop"><div><div class="roundlabel">${d.tag}</div></div></div>
+    <div class="prompt fade" style="font-size:19px;line-height:1.35">${d.q}</div>
+    <div class="poles"><span>${d.lo}</span><span>${d.hi}</span></div>
+    <div class="scale fade">${rows}</div>
+  `;
+  requestAnimationFrame(()=>setResolve(1));
+  screen.querySelectorAll('.lvl').forEach(el=>{
+    el.onclick=()=>chooseScale(parseInt(el.dataset.v),el);
+  });
+}
+
+function chooseScale(v,el){
+  screen.querySelectorAll('.lvl').forEach(x=>x.onclick=null);
+  el.classList.add('picked');
+  const d=DEEP[deepIdx];
+  deepLog.push({q:d.q, levels:d.levels, you:v, her:d.her});
+  setTimeout(()=>scaleResult(v),650);
+}
+
+function scaleResult(v){
+  const d=DEEP[deepIdx];
+  const her=d.her;
+  const segs=[1,2,3,4,5,6].map(n=>{
+    let c='';
+    if(n===v&&n===her)c='both'; else if(n===v)c='you'; else if(n===her)c='her';
+    return `<div class="seg ${c}"></div>`;
+  }).join('');
+  const gap=Math.abs(v-her);
+  // framed as how your two styles would MEET — difference is information, not a demerit
+  const together = gap===0
+      ? "You move the same way here. Easy — just watch the blind spot you'd both share."
+    : gap<=1
+      ? "Slightly different tempos. The kind of gap a little patience closes."
+    : v<her
+      ? "You'd lean in; she'd want room. Not a clash — a rhythm you'd learn. Give her the space and she meets you."
+      : "She'd lean in; you'd want room. Knowing that now is the whole point — you can offer it on purpose.";
+  screen.className='screen';
+  screen.innerHTML=`
+    <div class="center fade">
+      <div class="roundlabel">${d.tag}</div>
+      <div class="why" style="margin-bottom:16px">${d.q}</div>
+      <div class="meter">${segs}</div>
+      <div class="legend">
+        <i><span class="sw" style="background:var(--terra)"></span>You · ${v}</i>
+        <i><span class="sw" style="background:var(--sage-ink)"></span>Maya · ${her}</i>
+      </div>
+      <div style="text-align:left;margin-top:20px">
+        <div class="roundlabel" style="margin-bottom:6px">What you learned about her</div>
+        <div class="sub" style="text-align:left;margin:0 0 16px">${d.herInsight}</div>
+        <div class="roundlabel" style="margin-bottom:6px">How you two would meet it</div>
+        <div class="sub" style="text-align:left;margin:0">${together}</div>
+      </div>
+    </div>
+    <div class="actions fade">
+      <button class="btn primary" onclick="nextDeeper()">${deepIdx<DEEP.length-1?'Next question':'Back to Maya'}</button>
+      <button class="btn ghost" onclick="hub()">Pause here</button>
+    </div>
+  `;
+}
+function nextDeeper(){ deepIdx++; renderScale(); }
+
+/* ---------- past answers ---------- */
+function pastAnswers(){
+  screen.className='screen';
+  const light=log.map(e=>`
+    <div class="qa">
+      <div class="qq">${e.q}</div>
+      <div class="ans"><span class="nm">You</span><span class="vv">${e.youText}</span></div>
+      <div class="ans"><span class="nm">Maya</span><span class="vv">${e.herText}</span></div>
+      <div class="match ${e.you===e.her?'':'diff'}">${e.you===e.her?'◆ you matched':'◇ you differed'}</div>
+    </div>`).join('');
+  const deep=deepLog.map(e=>{
+    const gap=Math.abs(e.you-e.her);
+    return `<div class="qa">
+      <div class="qq">${e.q}</div>
+      <div class="ans"><span class="nm">You</span><span class="vv">${e.you} · ${e.levels[e.you-1]}</span></div>
+      <div class="ans"><span class="nm">Maya</span><span class="vv">${e.her} · ${e.levels[e.her-1]}</span></div>
+      <div class="match ${gap<=1?'':'diff'}">${gap===0?'◆ identical':gap===1?'◆ close':'◇ '+gap+' apart'}</div>
+    </div>`;
+  }).join('');
+  screen.innerHTML=`
+    <button class="back" onclick="hub()">‹ Back</button>
+    <h1 style="margin-bottom:4px">Where you landed</h1>
+    <div class="sub" style="text-align:left;margin:0 0 16px">The whole thread, kept. ${matchCount()} of ${log.length+deepLog.length} aligned.</div>
+    <div class="scroll">${light}${deep||''}</div>
+  `;
+}
+
+function noMatch(){
+  screen.className='screen';
+  screen.innerHTML=`
+    <div class="center fade">
+      <div style="width:138px;height:138px;border-radius:50%;background:#e3d8c6;display:flex;align-items:center;justify-content:center;margin-bottom:8px">
+        <span style="font-family:'Fraunces',serif;font-style:italic;color:var(--ink-soft);font-size:15px">— quietly closed</span>
+      </div>
+      <h1>No hard feelings.</h1>
+      <div class="sub">Maya never sees a rejection — just that the round wrapped. The face stays unrevealed. Nobody got consumed.</div>
+    </div>
+    <div class="actions fade">
+      <button class="btn primary" onclick="start()">Meet someone new</button>
+    </div>
+  `;
+}
+
+function start(){round=0;picks=[];log=[];deepLog=[];matched=false;renderRound();}
+start();
+</script>
+</body>
+</html>
