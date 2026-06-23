@@ -230,11 +230,16 @@ const FACE_SRC="https://randomuser.me/api/portraits/women/22.jpg";
 const FALLBACK="data:image/svg+xml,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='200' height='200' fill='#e7c49a'/><circle cx='100' cy='86' r='44' fill='#f0cda6'/><path d='M28 200 C28 150 70 128 100 128 C130 128 172 150 172 200 Z' fill='#caa06f'/><ellipse cx='84' cy='84' rx='5' ry='7' fill='#3a2a22'/><ellipse cx='116' cy='84' rx='5' ry='7' fill='#3a2a22'/><path d='M86 108 q14 12 28 0' stroke='#a85' stroke-width='4' fill='none' stroke-linecap='round'/></svg>`);
 
 const ROUNDS=[
-  {q:'A night that drifts till 2am, or home by ten?',a:'A night that drifts till 2am at a diner',b:'Home by ten with tea and a good book',her:'b',echo:'You said diner. Maya picked the book — "someone has to drag the other out."'},
-  {q:'Know every road, or get lost?',a:'Know every road on the map',b:'Get pleasantly, completely lost',her:'b',echo:'You both chose lost. Suspicious.'},
-  {q:'The same ten books, or only new ones?',a:'Reread the same ten books forever',b:"Only new books — some you'll hate",her:'a',echo:'Split. Maya will defend this in round 4, guaranteed.'},
-  {q:'Sing badly and loud, or hum to yourself?',a:'Sing badly and loudly',b:'Hum perfectly, to yourself',her:'a',echo:'You said loud. She said she\'d harmonise.'},
-  {q:'First pancake, or wait for the perfect one?',a:'The first pancake, slightly wrong',b:'Wait for the perfect one',her:'a',echo:'You both took the first pancake. Basically a personality match.'},
+  {q:'A night that drifts till 2am, or home by ten?',a:'A night that drifts till 2am at a diner',b:'Home by ten with tea and a good book',her:'b',
+   echo:{agree:'You both picked the quiet night in. A pair of homebodies — dangerous.',dis:'You said the 2am diner; NAME picked the book. Someone has to drag the other out.'}},
+  {q:'Know every road, or get lost?',a:'Know every road on the map',b:'Get pleasantly, completely lost',her:'b',
+   echo:{agree:'You both chose lost. Suspicious.',dis:'You\'d keep the map; NAME wants to get lost. Opposites — could be fun.'}},
+  {q:'The same ten books, or only new ones?',a:'Reread the same ten books forever',b:"Only new books — some you'll hate",her:'a',
+   echo:{agree:'You both reread the same ten books. Comfort people.',dis:'Split — you chase new, NAME rereads. This\'ll be a good argument.'}},
+  {q:'Sing badly and loud, or hum to yourself?',a:'Sing badly and loudly',b:'Hum perfectly, to yourself',her:'a',
+   echo:{agree:'You both sing badly and loudly. The neighbours are doomed.',dis:'You hum to yourself; NAME belts it out. She said she\'d harmonise anyway.'}},
+  {q:'First pancake, or wait for the perfect one?',a:'The first pancake, slightly wrong',b:'Wait for the perfect one',her:'a',
+   echo:{agree:'You both took the first pancake. Basically a personality match.',dis:'You\'d wait for the perfect pancake; NAME grabs the first. Patience vs. go.'}},
 ];
 const DEEP=[
   {tag:'Going deeper · 1',q:'When you and someone close land on opposite sides of a moral or political line — how do you want to move through it?',lo:'Open to difference',hi:'Need alignment',her:3,
@@ -278,6 +283,7 @@ function welcome(){
     </div>
     <div class="actions fade"><button class="btn primary" onclick="intentScreen()">Come in</button>
       <button class="btn ghost" onclick="login()">I've been here before — log in</button>
+      <button class="btn ghost" style="font-size:13px;padding:8px" onclick="choosePartner(0)">Just show me how it works →</button>
       <div class="cap" style="margin-top:2px">Seen · known · heard</div></div>`;
 }
 /* ---------- LOGIN (passwordless) ---------- */
@@ -501,7 +507,7 @@ function pick(side){
   const r=ROUNDS[round];
   log.push({q:r.q,you:side,her:r.her,youText:side==='a'?r.a:r.b,herText:r.her==='a'?r.a:r.b});
   setResolve(Math.min(.85,(round+1)*.17));
-  const e=document.getElementById('echo');e.textContent=r.echo;e.classList.add('show');
+  const e=document.getElementById('echo');e.textContent=(side===r.her?r.echo.agree:r.echo.dis).replaceAll('NAME',partner.name);e.classList.add('show');
   setTimeout(()=>{round++;round<ROUNDS.length?renderRound():decision()},1450);
 }
 function decision(){
@@ -511,7 +517,7 @@ function decision(){
     <h2>So — that was ${partner.name}.</h2>
     <div class="sub" style="max-width:280px">You know how she argues, what makes her laugh, that she takes the first pancake. You almost know her face.</div>
     <div class="why" style="max-width:300px;margin-top:4px"><b>Still hidden:</b> the last of her photo. The match earns it.</div></div>
-    <div class="actions fade"><button class="btn primary" onclick="reveal()">Match with Maya</button>
+    <div class="actions fade"><button class="btn primary" onclick="reveal()">Match with ${partner.name}</button>
       <button class="btn ghost" onclick="noMatch()">Not this time</button></div>`;
   requestAnimationFrame(()=>setResolve(.85));
 }
