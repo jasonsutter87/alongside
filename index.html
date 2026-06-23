@@ -121,7 +121,10 @@
   .hubcard span{font-size:12.5px;color:var(--ink-soft)}
   .hubcard .arr{margin-left:auto;color:var(--ink-soft)}
 
-  .back{border:none;background:none;color:var(--ink-soft);font-size:14px;cursor:pointer;margin:4px 0 12px;padding:0}
+  .back{background:rgba(255,255,255,.7);border:1px solid var(--line);color:var(--ink);font-size:15px;cursor:pointer;
+    margin:4px 0 14px;padding:7px 13px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;line-height:1;
+    box-shadow:0 2px 6px -3px rgba(120,90,60,.3)}
+  .back:active{transform:scale(.96)}
   .fade{animation:fade .5s ease both}
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .restart{font-size:13px;color:var(--ink-soft);cursor:pointer;border:none;background:none;text-decoration:underline;text-underline-offset:3px}
