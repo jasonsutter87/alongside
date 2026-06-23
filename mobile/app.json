@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Alongside",
+    "slug": "alongside",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jasonsutter.alongside"
+    },
+    "android": {
+      "package": "com.jasonsutter.alongside",
+      "adaptiveIcon": {
+        "backgroundColor": "#efe6d8",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a3b72fed-a2d9-4014-9f14-8a693a99d1e8"
+      }
+    },
+    "owner": "jasonsutter"
+  }
+}
