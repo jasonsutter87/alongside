@@ -6,9 +6,10 @@ import Discover from './Discover';
 import Profile from './Profile';
 import Settings from './Settings';
 import Safety from './Safety';
+import Live from './Live';
 
 type Tab = 'discover' | 'profile' | 'settings';
-type Sub = 'none' | 'safety';
+type Sub = 'none' | 'safety' | 'live';
 type Props = { onStartGame: () => void; onSignOut: () => void };
 
 const TABS: { key: Tab; icon: string; label: string }[] = [
@@ -22,11 +23,11 @@ export default function MainShell({ onStartGame, onSignOut }: Props) {
   const [sub, setSub] = useState<Sub>('none');
   const [intent, setIntent] = useState<'dating' | 'friends'>('dating');
 
-  if (sub === 'safety') {
+  if (sub === 'safety' || sub === 'live') {
     return (
       <SafeAreaView style={s.fill}>
         <StatusBar style="dark" />
-        <Safety onBack={() => setSub('none')} />
+        {sub === 'safety' ? <Safety onBack={() => setSub('none')} /> : <Live onBack={() => setSub('none')} />}
       </SafeAreaView>
     );
   }
@@ -38,7 +39,7 @@ export default function MainShell({ onStartGame, onSignOut }: Props) {
         {tab === 'discover' && <Discover onPick={onStartGame} />}
         {tab === 'profile' && <Profile intent={intent} />}
         {tab === 'settings' && (
-          <Settings intent={intent} setIntent={setIntent} onOpenSafety={() => setSub('safety')} onSignOut={onSignOut} />
+          <Settings intent={intent} setIntent={setIntent} onOpenSafety={() => setSub('safety')} onOpenLive={() => setSub('live')} onSignOut={onSignOut} />
         )}
       </View>
 

@@ -6,10 +6,11 @@ type Props = {
   intent: 'dating' | 'friends';
   setIntent: (i: 'dating' | 'friends') => void;
   onOpenSafety: () => void;
+  onOpenLive: () => void;
   onSignOut: () => void;
 };
 
-export default function Settings({ intent, setIntent, onOpenSafety, onSignOut }: Props) {
+export default function Settings({ intent, setIntent, onOpenSafety, onOpenLive, onSignOut }: Props) {
   return (
     <ScrollView contentContainerStyle={s.pad}>
       <Text style={s.h1}>Settings</Text>
@@ -37,7 +38,7 @@ export default function Settings({ intent, setIntent, onOpenSafety, onSignOut }:
 
       <Text style={s.label}>PRIVACY & SAFETY</Text>
       <Pressable style={s.row} onPress={onOpenSafety}><Text style={s.rowIcon}>🛡️</Text><Text style={s.rowText}>Safety & location controls</Text><Text style={s.chev}>›</Text></Pressable>
-      <Pressable style={s.row}><Text style={s.rowIcon}>🗺️</Text><Text style={s.rowText}>Live & heat map</Text><Text style={s.chev}>›</Text></Pressable>
+      <Pressable style={s.row} onPress={onOpenLive}><Text style={s.rowIcon}>🗺️</Text><Text style={s.rowText}>Live & heat map</Text><Text style={s.chev}>›</Text></Pressable>
       <Pressable style={s.row}><Text style={s.rowIcon}>🔔</Text><Text style={s.rowText}>Notifications</Text><Text style={s.chev}>›</Text></Pressable>
 
       <Text style={s.label}>YOUR DATA IS YOURS</Text>

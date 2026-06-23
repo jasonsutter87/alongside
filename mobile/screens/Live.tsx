@@ -1,0 +1,172 @@
+import React, { useState } from 'react';
+import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { C, F } from '../theme';
+
+type Phase = 'intro' | 'set' | 'map';
+const SPOTS = ['Beals Point', 'The lake walkway', 'Folsom Lake trailhead', 'Granite Bay beach'];
+const DURS = ['1 hour', '2 hours', 'Until sunset'];
+const TRAITS = ['Marathon training', 'Reads the same ten books', 'Wants to learn guitar', 'Always brings the dog'];
+
+const SAFETY = [
+  ['⏱️', 'Duration-based, never always-on', 'You set how long. It switches itself off — no lingering signal, no trail.'],
+  ['📍', 'Public places only', 'You check into a venue — a café, a trail, an event. Never your home. Never a street corner.'],
+  ['🌫️', 'Fuzzed to a ¼-mile grid', 'Your exact spot is never shared — only a soft sense of “around here.”'],
+  ['🔥', 'A heat map of energy, never people', 'You see where it’s warm — never who’s there, never a dot, never a path.'],
+  ['🙈', 'You’re a blur in a crowd', 'We never light up an area with too few people. If it’s just you, the map stays cold.'],
+];
+
+function Blob({ left, top, size }: { left: number; top: number; size: number }) {
+  return (
+    <View pointerEvents="none" style={{ position: 'absolute', left, top, width: size, height: size }}>
+      <View style={[s.blobLayer, { width: size, height: size, borderRadius: size / 2, backgroundColor: '#9b2f7a', opacity: 0.5 }]} />
+      <View style={[s.blobLayer, { width: size * 0.66, height: size * 0.66, borderRadius: size, top: size * 0.17, left: size * 0.17, backgroundColor: '#ef8a2a', opacity: 0.7 }]} />
+      <View style={[s.blobLayer, { width: size * 0.34, height: size * 0.34, borderRadius: size, top: size * 0.33, left: size * 0.33, backgroundColor: '#ffe24d', opacity: 0.95 }]} />
+    </View>
+  );
+}
+
+export default function Live({ onBack }: { onBack: () => void }) {
+  const [phase, setPhase] = useState<Phase>('intro');
+  const [spot, setSpot] = useState(SPOTS[0]);
+  const [dur, setDur] = useState(DURS[1]);
+  const [trait, setTrait] = useState<string | null>(null);
+  const [sheet, setSheet] = useState<{ name: string; n: number; ov: number } | null>(null);
+
+  if (phase === 'intro') {
+    return (
+      <ScrollView contentContainerStyle={s.pad}>
+        <Pressable onPress={onBack}><Text style={s.back}>‹ Settings</Text></Pressable>
+        <Text style={[s.brand, { color: '#d9534f' }]}>● LIVE</Text>
+        <Text style={s.h1}>Out in the{'\n'}real world.</Text>
+        <Text style={[s.sub, { marginBottom: 16 }]}>
+          Let nearby people know there’s energy where you are — and go meet someone in person, tonight.
+          Before you do, read how we keep this safe. This part isn’t fine print.
+        </Text>
+        <View style={s.card}>
+          {SAFETY.map(([ic, t, d], i) => (
+            <View key={i} style={[s.safeRow, i === SAFETY.length - 1 && { marginBottom: 0 }]}>
+              <Text style={s.safeIcon}>{ic}</Text>
+              <View style={{ flex: 1 }}><Text style={s.safeTitle}>{t}</Text><Text style={s.sub}>{d}</Text></View>
+            </View>
+          ))}
+        </View>
+        <Btn label="I understand — go live" onPress={() => setPhase('set')} />
+        <Btn label="Not now" ghost onPress={onBack} />
+      </ScrollView>
+    );
+  }
+
+  if (phase === 'set') {
+    return (
+      <ScrollView contentContainerStyle={s.pad}>
+        <Pressable onPress={() => setPhase('intro')}><Text style={s.back}>‹</Text></Pressable>
+        <Text style={s.h2}>Where are you,{'\n'}and for how long?</Text>
+        <Text style={[s.sub, { marginBottom: 14 }]}>Your phone found the public places around you. Pick one — we anchor your signal to the place, not to you.</Text>
+        <Text style={s.label}>📍 PUBLIC PLACES NEAR YOU RIGHT NOW</Text>
+        <Pills options={SPOTS} value={spot} onPick={setSpot} />
+        <Text style={s.fine}>Your exact location never leaves your phone — only the place you pick (public, fuzzed to ¼ mile) is shared.</Text>
+        <Text style={s.label}>HOW LONG</Text>
+        <Pills options={DURS} value={dur} onPick={setDur} />
+        <Text style={s.label}>SHOW ONE TRAIT TO THE AREA · OPTIONAL</Text>
+        <Pills options={TRAITS} value={trait} onPick={(t) => setTrait(t === trait ? null : t)} />
+        <Btn label="Go live" onPress={() => setPhase('map')} />
+      </ScrollView>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerStyle={s.pad}>
+      <Pressable onPress={() => setPhase('set')}><Text style={s.back}>‹</Text></Pressable>
+      <View style={s.banner}>
+        <View style={s.liveDot} />
+        <View style={{ flex: 1 }}>
+          <Text style={s.bannerTitle}>You’re live near {spot}</Text>
+          <Text style={s.sub}>{dur} left · auto-off · {trait ? `showing: ${trait}` : 'no trait shown'}</Text>
+        </View>
+      </View>
+
+      <View style={s.map}>
+        <Blob left={40} top={60} size={150} />
+        <Blob left={180} top={30} size={110} />
+        <Blob left={170} top={150} size={130} />
+        <View style={s.youRing} />
+        <Pressable style={[s.hot, { left: 150, top: 10, width: 90, height: 90 }]} onPress={() => setSheet({ name: 'Midtown art walk', n: 9, ov: 2 })} />
+        <Pressable style={[s.hot, { left: 160, top: 140, width: 100, height: 100 }]} onPress={() => setSheet({ name: 'Track 7 brewery', n: 6, ov: 1 })} />
+      </View>
+
+      <View style={s.sheet}>
+        {!sheet ? (
+          <Text style={[s.sub, { textAlign: 'center' }]}>Tap a warm area — you’ll see how many and what you share, never who or exactly where.</Text>
+        ) : (
+          <>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <Text style={s.sheetTitle}>{sheet.name}</Text>
+              <View style={s.warmTag}><Text style={s.warmTagText}>🔥 warm now</Text></View>
+            </View>
+            <Text style={[s.sub, { marginBottom: 10 }]}>About {sheet.n} people open to meeting here right now{sheet.ov ? ` · ${sheet.ov} share an overlap with you` : ''}.</Text>
+            {sheet.ov > 0 && <Text style={s.sheetWhy}>Someone here is also training for a marathon. We won’t say who — but now you’ve got a way in: “Are you training for a marathon?” beats “hey, you’re cute” every time.</Text>}
+            <Text style={s.fine}>No names. No dots. No exact spot. Just a reason to say hi.</Text>
+          </>
+        )}
+      </View>
+      <Btn label="Go dark" ghost onPress={onBack} />
+    </ScrollView>
+  );
+}
+
+function Pills({ options, value, onPick }: { options: string[]; value: string | null; onPick: (v: string) => void }) {
+  return (
+    <View style={s.pillWrap}>
+      {options.map((o) => {
+        const on = o === value;
+        return (
+          <Pressable key={o} onPress={() => onPick(o)} style={[s.pill, on && { backgroundColor: C.terra, borderColor: C.terra }]}>
+            <Text style={[s.pillText, on && { color: C.white }]}>{o}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function Btn({ label, onPress, ghost }: { label: string; onPress: () => void; ghost?: boolean }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [s.btn, ghost ? s.btnGhost : s.btnPrimary, pressed && { opacity: 0.85 }]}>
+      <Text style={[s.btnText, ghost && { color: C.inkSoft }]}>{label}</Text>
+    </Pressable>
+  );
+}
+
+const s = StyleSheet.create({
+  pad: { paddingHorizontal: 26, paddingTop: 14, paddingBottom: 24 },
+  back: { fontFamily: F.sans, fontSize: 15, color: C.inkSoft, marginBottom: 10 },
+  brand: { fontFamily: F.sansSemi, letterSpacing: 2, fontSize: 12, color: C.terraDeep },
+  h1: { fontFamily: F.serif, fontSize: 30, color: C.ink, lineHeight: 34, marginTop: 6, marginBottom: 10 },
+  h2: { fontFamily: F.serif, fontSize: 22, color: C.ink, lineHeight: 27, marginBottom: 14 },
+  sub: { fontFamily: F.sans, fontSize: 12.5, color: C.inkSoft, lineHeight: 18 },
+  fine: { fontFamily: F.sans, fontSize: 12, color: C.inkSoft, marginTop: 8, lineHeight: 17 },
+  label: { fontFamily: F.sansSemi, fontSize: 11, letterSpacing: 1.5, color: C.inkSoft, marginTop: 16, marginBottom: 8 },
+  card: { backgroundColor: 'rgba(255,255,255,0.5)', borderWidth: 1, borderColor: C.line, borderRadius: 16, padding: 16, marginBottom: 6 },
+  safeRow: { flexDirection: 'row', gap: 12, marginBottom: 13 },
+  safeIcon: { fontSize: 18, width: 24, textAlign: 'center' },
+  safeTitle: { fontFamily: F.serif, fontSize: 14, color: C.ink, marginBottom: 1 },
+  pillWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  pill: { backgroundColor: 'rgba(255,255,255,0.5)', borderWidth: 1, borderColor: C.line, borderRadius: 20, paddingVertical: 8, paddingHorizontal: 14 },
+  pillText: { fontFamily: F.serifReg, fontSize: 13, color: C.ink },
+  banner: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: 'rgba(217,139,107,0.12)', borderWidth: 1, borderColor: C.terra, borderRadius: 14, padding: 12, marginBottom: 12 },
+  liveDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: '#d9534f' },
+  bannerTitle: { fontFamily: F.serif, fontSize: 14, color: C.ink },
+  map: { height: 300, borderRadius: 18, borderWidth: 1, borderColor: C.line, backgroundColor: '#e8e1d1', overflow: 'hidden', position: 'relative' },
+  blobLayer: { position: 'absolute' },
+  youRing: { position: 'absolute', left: 70, top: 100, width: 60, height: 60, borderRadius: 30, borderWidth: 2, borderColor: C.terraDeep, borderStyle: 'dashed', backgroundColor: 'rgba(217,139,107,0.1)' },
+  hot: { position: 'absolute', borderRadius: 60 },
+  sheet: { backgroundColor: 'rgba(255,255,255,0.72)', borderWidth: 1, borderColor: C.line, borderRadius: 16, padding: 15, marginTop: 12 },
+  sheetTitle: { fontFamily: F.serif, fontSize: 17, color: C.ink },
+  sheetWhy: { fontFamily: F.serifItalic, fontSize: 13, color: C.ink, lineHeight: 19, marginBottom: 10 },
+  warmTag: { backgroundColor: C.rose, borderRadius: 20, paddingVertical: 3, paddingHorizontal: 10 },
+  warmTagText: { fontFamily: F.sansSemi, fontSize: 11, color: C.roseInk },
+  btn: { borderRadius: 18, padding: 16, alignItems: 'center', marginTop: 10 },
+  btnPrimary: { backgroundColor: C.terra },
+  btnGhost: { backgroundColor: 'transparent' },
+  btnText: { fontFamily: F.sansSemi, fontSize: 16, color: C.white },
+});
