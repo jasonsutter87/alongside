@@ -17,6 +17,16 @@ export const PARTNER = {
     'You both flagged Tomorrow, and Tomorrow, and Tomorrow — and you’re both marathon-training this spring.',
 };
 
+// the served queue — blind until you play; cards lead with the REASON, never the face.
+export const MATCHES = [
+  { name: 'Maya', reason: 'You both flagged Tomorrow, and Tomorrow, and Tomorrow — and you’re both marathon-training this spring.' },
+  { name: 'Priya', reason: 'You both quit the city for a year and came back. Different reasons. Same itch.' },
+  { name: 'Robin', reason: 'She plays cello; you said you’ve always wanted to learn an instrument. A jigsaw fit.' },
+  { name: 'Sloane', reason: 'You’re both going to Oaxaca next spring — three weeks apart.' },
+  { name: 'Wren', reason: 'Both of you cook when you’re stressed. Neither of you follows the recipe.' },
+  { name: 'Noa', reason: 'You both chose “get pleasantly, completely lost” before you ever met.' },
+];
+
 export const ROUNDS: Round[] = [
   {
     q: 'A night that drifts till 2am, or home by ten?',

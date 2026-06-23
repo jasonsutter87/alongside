@@ -13,8 +13,10 @@ import {
 } from '@expo-google-fonts/inter';
 import { C, F } from './theme';
 import { ROUNDS, PARTNER } from './data';
+import Onboarding from './screens/Onboarding';
+import Discover from './screens/Discover';
 
-type Screen = 'welcome' | 'game' | 'decision' | 'reveal' | 'nomatch';
+type Screen = 'welcome' | 'onboarding' | 'discover' | 'game' | 'decision' | 'reveal' | 'nomatch';
 
 // ---- the resolving dot: gold veil + blur that recede as `resolve` (0..1) rises ----
 function Dot({ size, resolve }: { size: number; resolve: number }) {
@@ -82,11 +84,20 @@ export default function App() {
           </Text>
         </View>
         <View style={s.pad}>
-          <Btn label="Come in" onPress={startGame} />
+          <Btn label="Come in" onPress={() => setScreen('onboarding')} />
+          <Btn label="Just show me how it works" ghost onPress={startGame} />
           <Text style={[s.cap, { textAlign: 'center', marginTop: 12 }]}>Seen · known · heard</Text>
         </View>
       </SafeAreaView>
     );
+  }
+
+  if (screen === 'onboarding') {
+    return <Onboarding onComplete={() => setScreen('discover')} onBack={() => setScreen('welcome')} />;
+  }
+
+  if (screen === 'discover') {
+    return <Discover onPick={() => startGame()} />;
   }
 
   if (screen === 'game') {
