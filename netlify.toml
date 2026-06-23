@@ -1,0 +1,8 @@
+# One deploy: the Hugo marketing+blog site, with the app folded in at /app/
+# (the /demo page iframes /app/). Source of truth for the app stays in /app.
+[build]
+  command = "rm -rf site/static/app && cp -r app site/static/app && hugo --source site --gc --minify"
+  publish = "site/public"
+
+[build.environment]
+  HUGO_VERSION = "0.147.4"

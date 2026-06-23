@@ -1,0 +1,15 @@
+baseURL = 'https://alongside.dating/'
+languageCode = 'en-us'
+title = 'Alongside'
+
+[params]
+CompanyName = 'Alongside'
+repoName = 'alongside'
+tagline = "Connection isn't something you swipe for."
+description = "A connection app where you're seen, known, and heard — built in public."
+
+[environments.development]
+baseURL = 'http://localhost:1313/'
+
+[environments.production]
+baseURL = 'https://alongside.dating/'
