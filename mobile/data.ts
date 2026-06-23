@@ -27,6 +27,14 @@ export const MATCHES = [
   { name: 'Noa', reason: 'You both chose “get pleasantly, completely lost” before you ever met.' },
 ];
 
+// chat starters — pulled from the game, so nobody ever faces an empty box.
+export const STARTERS = [
+  { chip: 'Defend round 3 📚', say: 'Okay, defend it — rereading the same ten books forever. Go.' },
+  { chip: 'The Oaxaca overlap ✈️', say: 'Wait — you’re going to Oaxaca too? When? We’re three weeks apart.' },
+  { chip: 'Your unhinged round-2 answer', say: 'I need you to explain your round-2 answer because it was unhinged and I respect it.' },
+  { chip: 'First pancake solidarity 🥞', say: 'First-pancake people unite. Perfectionists are exhausting.' },
+];
+
 export const ROUNDS: Round[] = [
   {
     q: 'A night that drifts till 2am, or home by ten?',

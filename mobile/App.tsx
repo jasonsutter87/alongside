@@ -15,8 +15,9 @@ import { C, F } from './theme';
 import { ROUNDS, PARTNER } from './data';
 import Onboarding from './screens/Onboarding';
 import Discover from './screens/Discover';
+import Chat from './screens/Chat';
 
-type Screen = 'welcome' | 'onboarding' | 'discover' | 'game' | 'decision' | 'reveal' | 'nomatch';
+type Screen = 'welcome' | 'onboarding' | 'discover' | 'game' | 'decision' | 'reveal' | 'nomatch' | 'chat';
 
 // ---- the resolving dot: gold veil + blur that recede as `resolve` (0..1) rises ----
 function Dot({ size, resolve }: { size: number; resolve: number }) {
@@ -173,10 +174,15 @@ export default function App() {
           </Text>
         </View>
         <View style={s.pad}>
-          <Btn label="Play again" onPress={startGame} />
+          <Btn label="Say something" onPress={() => setScreen('chat')} />
+          <Btn label="Play again" ghost onPress={startGame} />
         </View>
       </SafeAreaView>
     );
+  }
+
+  if (screen === 'chat') {
+    return <Chat onBack={() => setScreen('reveal')} />;
   }
 
   return (
