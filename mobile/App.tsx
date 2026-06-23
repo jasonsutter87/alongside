@@ -14,10 +14,10 @@ import {
 import { C, F } from './theme';
 import { ROUNDS, PARTNER } from './data';
 import Onboarding from './screens/Onboarding';
-import Discover from './screens/Discover';
+import MainShell from './screens/MainShell';
 import Chat from './screens/Chat';
 
-type Screen = 'welcome' | 'onboarding' | 'discover' | 'game' | 'decision' | 'reveal' | 'nomatch' | 'chat';
+type Screen = 'welcome' | 'onboarding' | 'main' | 'game' | 'decision' | 'reveal' | 'nomatch' | 'chat';
 
 // ---- the resolving dot: gold veil + blur that recede as `resolve` (0..1) rises ----
 function Dot({ size, resolve }: { size: number; resolve: number }) {
@@ -94,11 +94,11 @@ export default function App() {
   }
 
   if (screen === 'onboarding') {
-    return <Onboarding onComplete={() => setScreen('discover')} onBack={() => setScreen('welcome')} />;
+    return <Onboarding onComplete={() => setScreen('main')} onBack={() => setScreen('welcome')} />;
   }
 
-  if (screen === 'discover') {
-    return <Discover onPick={() => startGame()} />;
+  if (screen === 'main') {
+    return <MainShell onStartGame={() => startGame()} onSignOut={() => setScreen('welcome')} />;
   }
 
   if (screen === 'game') {
