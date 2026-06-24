@@ -199,14 +199,14 @@ function Root() {
         </View>
         <View style={s.pad}>
           <Btn label="Say something" onPress={() => setScreen('chat')} />
-          <Btn label="Play again" ghost onPress={startGame} />
+          <Btn label="Back to Discover" ghost onPress={() => setScreen('main')} />
         </View>
       </SafeAreaView>
     );
   }
 
   if (screen === 'chat') {
-    return <Chat onBack={() => setScreen('reveal')} />;
+    return <Chat onBack={() => setScreen('main')} />;
   }
 
   return (
@@ -223,7 +223,7 @@ function Root() {
         </Text>
       </View>
       <View style={s.pad}>
-        <Btn label="Meet someone new" onPress={startGame} />
+        <Btn label="Back to Discover" onPress={() => setScreen('main')} />
       </View>
     </SafeAreaView>
   );
