@@ -53,6 +53,42 @@ export const BUDDIES = [
   { name: 'Sam, 38', blurb: 'At the bouldering gym twice a week. Looking for a regular climbing partner.' },
 ];
 
+// ---- deeper questions (post-match): LEARNING who she is, not scoring compatibility ----
+export type Deep = {
+  tag: string; q: string; lo: string; hi: string; her: number;
+  herInsight: string; levels: string[];
+};
+export const DEEP: Deep[] = [
+  {
+    tag: 'Going deeper · 1',
+    q: 'When you and someone close land on opposite sides of a moral or political line — how do you want to move through it?',
+    lo: 'Open to difference', hi: 'Need alignment', her: 3,
+    herInsight: "Maya can sit with disagreement — but only where she feels respected. Push without that, and she’ll close the door.",
+    levels: [
+      'We can talk about anything — difference is genuinely interesting to me.',
+      'I love a good debate. Disagreeing well brings me closer.',
+      'I can hold space for it, as long as there’s real respect.',
+      'Some topics I’d rather we tread lightly around.',
+      'I’d honestly rather those conversations didn’t come up.',
+      'I’d only feel at home with someone who feels what I feel.',
+    ],
+  },
+  {
+    tag: 'Going deeper · 2',
+    q: 'When things get hard between two people, what do you reach for first?',
+    lo: 'Talk it out now', hi: 'Need space first', her: 2,
+    herInsight: "Maya wants to mend things early and calmly — she won’t let a rift set. Silence reads to her as the problem getting worse.",
+    levels: [
+      'Talk it out immediately — I can’t rest until we’re okay.',
+      'Address it soon, calmly, before it sets.',
+      'A short pause, then we talk.',
+      'I need real space before I can say anything useful.',
+      'I retreat for a while; pushing makes it worse.',
+      'I go quiet and sort it out on my own.',
+    ],
+  },
+];
+
 // chat starters — pulled from the game, so nobody ever faces an empty box.
 export const STARTERS = [
   { chip: 'Defend round 3 📚', say: 'Okay, defend it — rereading the same ten books forever. Go.' },

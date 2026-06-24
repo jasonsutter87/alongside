@@ -17,9 +17,10 @@ import { ROUNDS, PARTNER } from './data';
 import Onboarding from './screens/Onboarding';
 import MainShell from './screens/MainShell';
 import Chat from './screens/Chat';
+import Deepen from './screens/Deepen';
 import { loadProfile, saveProfile, clearProfile, Profile } from './lib/store';
 
-type Screen = 'welcome' | 'onboarding' | 'main' | 'game' | 'decision' | 'reveal' | 'nomatch' | 'chat';
+type Screen = 'welcome' | 'onboarding' | 'main' | 'game' | 'decision' | 'reveal' | 'nomatch' | 'chat' | 'deepen';
 
 // ---- the resolving dot: gold veil + blur that recede as `resolve` (0..1) rises ----
 function Dot({ size, resolve }: { size: number; resolve: number }) {
@@ -198,11 +199,16 @@ function Root() {
           </Text>
         </View>
         <View style={s.pad}>
-          <Btn label="Say something" onPress={() => setScreen('chat')} />
+          <Btn label="Go deeper" onPress={() => setScreen('deepen')} />
+          <Btn label="Say something" ghost onPress={() => setScreen('chat')} />
           <Btn label="Back to Discover" ghost onPress={() => setScreen('main')} />
         </View>
       </SafeAreaView>
     );
+  }
+
+  if (screen === 'deepen') {
+    return <Deepen onDone={() => setScreen('reveal')} />;
   }
 
   if (screen === 'chat') {
