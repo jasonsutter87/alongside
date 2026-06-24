@@ -5,8 +5,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { C, F } from '../theme';
+import { Profile } from '../lib/store';
 
-type Props = { onComplete: (intent: 'dating' | 'friends') => void; onBack: () => void };
+type Props = { onComplete: (profile: Profile) => void; onBack: () => void };
 
 const QUIRKS = [
   'Curious over certain', 'Shows up early', 'Sings badly, loudly', 'Plans the whole trip',
@@ -175,7 +176,7 @@ export default function Onboarding({ onComplete, onBack }: Props) {
         <View style={{ marginTop: 24 }}>
           {step < 7
             ? <Btn label={step === 0 ? 'Start' : step === 6 ? 'Done' : 'Continue'} onPress={next} />
-            : <Btn label="See who’s waiting" onPress={() => onComplete(intent)} />}
+            : <Btn label="See who’s waiting" onPress={() => onComplete({ onboarded: true, intent, name, age, job, city, quirks, different: diff })} />}
         </View>
       </ScrollView>
     </SafeAreaView>

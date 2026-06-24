@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, Image, Pressable, StyleSheet, ActivityIndicator, ScrollView,
 } from 'react-native';
@@ -17,6 +17,7 @@ import { ROUNDS, PARTNER } from './data';
 import Onboarding from './screens/Onboarding';
 import MainShell from './screens/MainShell';
 import Chat from './screens/Chat';
+import { loadProfile, saveProfile, clearProfile, Profile } from './lib/store';
 
 type Screen = 'welcome' | 'onboarding' | 'main' | 'game' | 'decision' | 'reveal' | 'nomatch' | 'chat';
 
@@ -46,8 +47,19 @@ function Root() {
   const [round, setRound] = useState(0);
   const [echo, setEcho] = useState('');
   const [locked, setLocked] = useState(false);
+  const [booting, setBooting] = useState(true);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
-  if (!fontsLoaded) {
+  // on launch: if a profile already exists on this device, skip straight into the app
+  useEffect(() => {
+    (async () => {
+      const p = await loadProfile();
+      if (p) { setProfile(p); setScreen('main'); }
+      setBooting(false);
+    })();
+  }, []);
+
+  if (!fontsLoaded || booting) {
     return <View style={[s.fill, s.center]}><ActivityIndicator color={C.terra} /></View>;
   }
 
@@ -95,11 +107,22 @@ function Root() {
   }
 
   if (screen === 'onboarding') {
-    return <Onboarding onComplete={() => setScreen('main')} onBack={() => setScreen('welcome')} />;
+    return (
+      <Onboarding
+        onComplete={(p) => { saveProfile(p); setProfile(p); setScreen('main'); }}
+        onBack={() => setScreen('welcome')}
+      />
+    );
   }
 
   if (screen === 'main') {
-    return <MainShell onStartGame={() => startGame()} onSignOut={() => setScreen('welcome')} />;
+    return (
+      <MainShell
+        initialIntent={profile?.intent ?? 'dating'}
+        onStartGame={() => startGame()}
+        onSignOut={() => { clearProfile(); setProfile(null); setScreen('welcome'); }}
+      />
+    );
   }
 
   if (screen === 'game') {

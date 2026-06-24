@@ -12,7 +12,7 @@ import Live from './Live';
 
 type Tab = 'discover' | 'profile' | 'settings';
 type Sub = 'none' | 'safety' | 'live';
-type Props = { onStartGame: () => void; onSignOut: () => void };
+type Props = { onStartGame: () => void; onSignOut: () => void; initialIntent?: 'dating' | 'friends' };
 
 const TABS: { key: Tab; icon: string; label: string }[] = [
   { key: 'discover', icon: '✦', label: 'Discover' },
@@ -20,10 +20,10 @@ const TABS: { key: Tab; icon: string; label: string }[] = [
   { key: 'settings', icon: '⚙', label: 'Settings' },
 ];
 
-export default function MainShell({ onStartGame, onSignOut }: Props) {
+export default function MainShell({ onStartGame, onSignOut, initialIntent = 'dating' }: Props) {
   const [tab, setTab] = useState<Tab>('discover');
   const [sub, setSub] = useState<Sub>('none');
-  const [intent, setIntent] = useState<'dating' | 'friends'>('dating');
+  const [intent, setIntent] = useState<'dating' | 'friends'>(initialIntent);
 
   if (sub === 'safety' || sub === 'live') {
     return (
