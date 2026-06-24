@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import * as Location from 'expo-location';
 import { C, F } from '../theme';
+
+type LocState = 'idle' | 'asking' | 'granted' | 'denied' | 'error';
 
 type Phase = 'intro' | 'set' | 'map';
 const SPOTS = ['Beals Point', 'The lake walkway', 'Folsom Lake trailhead', 'Granite Bay beach'];
@@ -31,6 +34,30 @@ export default function Live({ onBack }: { onBack: () => void }) {
   const [dur, setDur] = useState(DURS[1]);
   const [trait, setTrait] = useState<string | null>(null);
   const [sheet, setSheet] = useState<{ name: string; n: number; ov: number } | null>(null);
+  const [loc, setLoc] = useState<LocState>('idle');
+  const [area, setArea] = useState<string>('');
+
+  async function findMe() {
+    setLoc('asking');
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') { setLoc('denied'); return; }
+      const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
+      // reverse-geocode to a coarse, human area name — we never store or show the precise point
+      const places = await Location.reverseGeocodeAsync(pos.coords);
+      const p = places[0];
+      const label = p ? [p.city || p.subregion, p.region].filter(Boolean).join(', ') : 'your area';
+      setArea(label || 'your area');
+      setLoc('granted');
+    } catch {
+      setLoc('error');
+    }
+  }
+
+  // ask for location when the user lands on the "set" step
+  useEffect(() => {
+    if (phase === 'set' && loc === 'idle') findMe();
+  }, [phase]);
 
   if (phase === 'intro') {
     return (
@@ -62,9 +89,29 @@ export default function Live({ onBack }: { onBack: () => void }) {
         <Pressable onPress={() => setPhase('intro')}><Text style={s.back}>‹</Text></Pressable>
         <Text style={s.h2}>Where are you,{'\n'}and for how long?</Text>
         <Text style={[s.sub, { marginBottom: 14 }]}>Your phone found the public places around you. Pick one — we anchor your signal to the place, not to you.</Text>
-        <Text style={s.label}>📍 PUBLIC PLACES NEAR YOU RIGHT NOW</Text>
-        <Pills options={SPOTS} value={spot} onPick={setSpot} />
-        <Text style={s.fine}>Your exact location never leaves your phone — only the place you pick (public, fuzzed to ¼ mile) is shared.</Text>
+        {loc === 'asking' && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10 }}>
+            <ActivityIndicator color={C.terra} />
+            <Text style={s.sub}>Finding public places near you…</Text>
+          </View>
+        )}
+        {(loc === 'denied' || loc === 'error') && (
+          <View style={s.locOff}>
+            <Text style={[s.sub, { marginBottom: 10 }]}>
+              {loc === 'denied'
+                ? 'Location is off. Turn it on so we can show the public places around you — we only ever use a rough area, never your exact spot.'
+                : 'Couldn’t read your location. Want to try again?'}
+            </Text>
+            <Pressable style={s.smallBtn} onPress={findMe}><Text style={s.smallBtnText}>Enable location</Text></Pressable>
+          </View>
+        )}
+        {loc === 'granted' && (
+          <>
+            <Text style={s.label}>📍 PUBLIC PLACES NEAR {area ? area.toUpperCase() : 'YOU'}</Text>
+            <Pills options={SPOTS} value={spot} onPick={setSpot} />
+            <Text style={s.fine}>Your exact location never leaves your phone — only the place you pick (public, fuzzed to ¼ mile) is shared.</Text>
+          </>
+        )}
         <Text style={s.label}>HOW LONG</Text>
         <Pills options={DURS} value={dur} onPick={setDur} />
         <Text style={s.label}>SHOW ONE TRAIT TO THE AREA · OPTIONAL</Text>
@@ -165,6 +212,9 @@ const s = StyleSheet.create({
   sheetWhy: { fontFamily: F.serifItalic, fontSize: 13, color: C.ink, lineHeight: 19, marginBottom: 10 },
   warmTag: { backgroundColor: C.rose, borderRadius: 20, paddingVertical: 3, paddingHorizontal: 10 },
   warmTagText: { fontFamily: F.sansSemi, fontSize: 11, color: C.roseInk },
+  locOff: { backgroundColor: 'rgba(255,255,255,0.5)', borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 15, marginTop: 10 },
+  smallBtn: { backgroundColor: C.terra, borderRadius: 12, paddingVertical: 11, alignItems: 'center' },
+  smallBtnText: { fontFamily: F.sansSemi, fontSize: 14, color: C.white },
   btn: { borderRadius: 18, padding: 16, alignItems: 'center', marginTop: 10 },
   btnPrimary: { backgroundColor: C.terra },
   btnGhost: { backgroundColor: 'transparent' },

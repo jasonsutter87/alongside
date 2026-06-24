@@ -24,7 +24,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Alongside uses your location only to show nearby public places and the live density map — never your exact spot, and never shared with anyone."
+        }
+      ]
     ],
     "extra": {
       "eas": {
