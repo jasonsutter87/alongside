@@ -27,6 +27,32 @@ export const MATCHES = [
   { name: 'Noa', reason: 'You both chose “get pleasantly, completely lost” before you ever met.' },
 ];
 
+// ---- friends & clubs (the green world) ----
+export type Bubble = {
+  name: string; kind: string; n: number; led: string;
+  blurb: string; next: string; long: string; runs: [string, string, string, string][];
+};
+export const BUBBLES: Bubble[] = [
+  {
+    name: 'Dawn Patrol Runners', kind: 'Running bubble · Portland', n: 24, led: 'Renee',
+    blurb: 'Easy 5–8k, three mornings a week. No-drop, all paces welcome.',
+    next: 'Sat 7am · Eastbank Esplanade',
+    long: 'Three mornings a week we meet before work and run an easy 5–8k along the river. No-drop, all paces, coffee after for whoever’s not rushing off.',
+    runs: [['SAT', '7a', 'Riverside long run', 'Eastbank Esplanade · 8k easy · 11 going'], ['TUE', '6a', 'Hill repeats (optional)', 'Mt Tabor · bring water · 6 going']],
+  },
+  {
+    name: 'Tuesday Pickup Frisbee', kind: 'Ultimate bubble · Portland', n: 17, led: 'Marcus',
+    blurb: 'Casual ultimate, every level. We keep the score loose and the vibe looser.',
+    next: 'Tue 6pm · Irving Park',
+    long: 'Every Tuesday, casual ultimate at Irving Park. Every level welcome — we keep score loosely and the vibe looser. Stick around for tacos after.',
+    runs: [['TUE', '6p', 'Pickup game', 'Irving Park · all levels · 14 going']],
+  },
+];
+export const BUDDIES = [
+  { name: 'Jordan, 35', blurb: 'Training for the same half-marathon. Wants a long-run partner.' },
+  { name: 'Sam, 38', blurb: 'At the bouldering gym twice a week. Looking for a regular climbing partner.' },
+];
+
 // chat starters — pulled from the game, so nobody ever faces an empty box.
 export const STARTERS = [
   { chip: 'Defend round 3 📚', say: 'Okay, defend it — rereading the same ten books forever. Go.' },

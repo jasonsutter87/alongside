@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { C, F } from '../theme';
 import Discover from './Discover';
+import Friends from './Friends';
 import Profile from './Profile';
 import Settings from './Settings';
 import Safety from './Safety';
@@ -37,7 +38,7 @@ export default function MainShell({ onStartGame, onSignOut }: Props) {
     <SafeAreaView style={s.fill}>
       <StatusBar style="dark" />
       <View style={{ flex: 1 }}>
-        {tab === 'discover' && <Discover onPick={onStartGame} />}
+        {tab === 'discover' && (intent === 'friends' ? <Friends /> : <Discover onPick={onStartGame} />)}
         {tab === 'profile' && <Profile intent={intent} />}
         {tab === 'settings' && (
           <Settings intent={intent} setIntent={setIntent} onOpenSafety={() => setSub('safety')} onOpenLive={() => setSub('live')} onSignOut={onSignOut} />
