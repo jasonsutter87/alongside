@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alongside — logo exploration</title>
+<style>
+  :root { --sage:#3A5A40; --stone:#4A4E54; --paper:#F4F1EA; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+         background:var(--paper); color:#2b2b2b; padding:40px; }
+  h1 { font-weight:600; letter-spacing:-0.02em; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:24px; margin-top:32px; }
+  .card { background:#fff; border-radius:16px; padding:28px; box-shadow:0 2px 12px rgba(0,0,0,.06);
+          display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .card svg { width:120px; height:120px; }
+  .label { font-size:13px; color:#777; text-align:center; }
+  .favrow { display:flex; align-items:center; gap:10px; }
+  .favrow svg { width:16px; height:16px; }
+  .favrow .m { width:32px; height:32px; }
+  .lockup { display:flex; align-items:center; gap:14px; margin-top:48px; }
+  .lockup svg { width:48px; height:48px; }
+  .wordmark { font-size:34px; font-weight:600; letter-spacing:-0.03em; color:var(--sage); }
+  .dark { background:var(--stone); }
+  .dark .wordmark { color:#fff; }
+</style>
+</head>
+<body>
+  <h1>Alongside — fern marks</h1>
+  <p class="label" style="text-align:left">Sage <code>#3A5A40</code> · Stone <code>#4A4E54</code>. All single-fill, transparent bg, favicon-safe.</p>
+
+  <div class="grid">
+
+    <!-- VARIANT A: MongoDB-style frond, paired leaflets of varying height -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" fill="#3A5A40" xmlns="http://www.w3.org/2000/svg" aria-label="Alongside fern A">
+        <!-- central stem -->
+        <path d="M48.5 92 C49 70 49 40 50 12 C50.6 30 50.8 60 51.5 92 Z"/>
+        <!-- leaflet pairs, smallest at tip growing downward -->
+        <g>
+          <path d="M50 16 C56 14 61 17 63 22 C58 22 53 20 50 22 Z"/>
+          <path d="M50 16 C44 14 39 17 37 22 C42 22 47 20 50 22 Z"/>
+
+          <path d="M49.5 28 C57 25 63 28 66 35 C59 35 53 32 49.5 35 Z"/>
+          <path d="M50.5 28 C43 25 37 28 34 35 C41 35 47 32 50.5 35 Z"/>
+
+          <path d="M49 42 C58 38 66 41 70 49 C61 49 53 45 49 48 Z"/>
+          <path d="M51 42 C42 38 34 41 30 49 C39 49 47 45 51 48 Z"/>
+
+          <path d="M48.5 57 C58 53 67 56 71 64 C62 64 53 60 48.5 63 Z"/>
+          <path d="M51.5 57 C42 53 33 56 29 64 C38 64 47 60 51.5 63 Z"/>
+
+          <path d="M48 72 C56 69 64 72 67 79 C59 79 52 75 48 78 Z"/>
+          <path d="M52 72 C44 69 36 72 33 79 C41 79 48 75 52 78 Z"/>
+        </g>
+      </svg>
+      <div class="label">A — MongoDB-style frond<br>paired leaflets, varying height</div>
+    </div>
+
+    <!-- VARIANT B: minimal — single curved frond, solid silhouette -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" fill="#3A5A40" xmlns="http://www.w3.org/2000/svg" aria-label="Alongside fern B">
+        <path d="M50 94
+                 C50 70 46 48 40 30
+                 C36 18 44 8 50 6
+                 C56 8 64 18 60 30
+                 C54 48 50 70 50 94 Z"/>
+        <!-- internal veins as negative space via overpaint in paper color -->
+        <g fill="#fff" opacity="0.0"></g>
+        <!-- leaflet notches cut as same-fill teeth -->
+        <path d="M50 30 C57 27 62 30 64 35 C58 34 53 32 50 34 Z"/>
+        <path d="M50 30 C43 27 38 30 36 35 C42 34 47 32 50 34 Z"/>
+        <path d="M50 46 C58 43 64 46 67 52 C60 51 53 48 50 50 Z"/>
+        <path d="M50 46 C42 43 36 46 33 52 C40 51 47 48 50 50 Z"/>
+        <path d="M50 64 C57 61 63 64 65 70 C59 69 53 66 50 68 Z"/>
+        <path d="M50 64 C43 61 37 64 35 70 C41 69 47 66 50 68 Z"/>
+      </svg>
+      <div class="label">B — minimal silhouette<br>single unfurling frond</div>
+    </div>
+
+    <!-- VARIANT C: two fronds growing alongside each other -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" fill="#3A5A40" xmlns="http://www.w3.org/2000/svg" aria-label="Alongside fern C">
+        <!-- left frond -->
+        <g>
+          <path d="M44 92 C44 68 41 46 37 28 C44 46 47 68 47 92 Z"/>
+          <path d="M40 34 C34 32 30 34 28 39 C33 38 37 36 41 38 Z"/>
+          <path d="M38 48 C31 46 26 48 24 54 C30 52 35 50 40 52 Z"/>
+          <path d="M37 63 C30 61 25 63 23 69 C29 67 34 65 39 67 Z"/>
+        </g>
+        <!-- right frond, slightly taller (growing alongside) -->
+        <g>
+          <path d="M56 92 C56 64 59 40 63 20 C56 40 53 64 53 92 Z"/>
+          <path d="M60 28 C66 26 70 28 72 33 C67 32 63 30 59 32 Z"/>
+          <path d="M62 42 C69 40 74 42 76 48 C70 46 65 44 60 46 Z"/>
+          <path d="M62 57 C69 55 74 57 76 63 C70 61 65 59 60 61 Z"/>
+          <path d="M61 71 C67 69 71 71 73 76 C68 75 64 73 60 75 Z"/>
+        </g>
+      </svg>
+      <div class="label">C — two fronds, alongside<br>(literal to the name)</div>
+    </div>
+
+    <!-- VARIANT D: spiral crozier / unfurling fiddlehead -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" fill="none" stroke="#3A5A40" stroke-width="7"
+           stroke-linecap="round" xmlns="http://www.w3.org/2000/svg" aria-label="Alongside fern D">
+        <path d="M50 92 C50 60 50 40 52 30 C54 18 64 14 70 20 C76 26 72 36 64 36 C58 36 56 30 60 27"/>
+        <path d="M50 60 C42 55 35 56 30 62" />
+        <path d="M50 72 C43 68 37 69 33 74" />
+        <path d="M51 48 C44 44 38 45 34 50" />
+      </svg>
+      <div class="label">D — fiddlehead / crozier<br>unfurling, the "First Five Minutes"</div>
+    </div>
+
+  </div>
+
+  <!-- favicon legibility check -->
+  <h1 style="margin-top:56px;font-size:18px">Favicon check (16 / 32 px)</h1>
+  <div class="favrow">
+    <svg viewBox="0 0 100 100" fill="#3A5A40" xmlns="http://www.w3.org/2000/svg"><path d="M48.5 92 C49 70 49 40 50 12 C50.6 30 50.8 60 51.5 92 Z"/><path d="M50 16 C56 14 61 17 63 22 C58 22 53 20 50 22 Z"/><path d="M50 16 C44 14 39 17 37 22 C42 22 47 20 50 22 Z"/><path d="M49.5 28 C57 25 63 28 66 35 C59 35 53 32 49.5 35 Z"/><path d="M50.5 28 C43 25 37 28 34 35 C41 35 47 32 50.5 35 Z"/><path d="M49 42 C58 38 66 41 70 49 C61 49 53 45 49 48 Z"/><path d="M51 42 C42 38 34 41 30 49 C39 49 47 45 51 48 Z"/><path d="M48.5 57 C58 53 67 56 71 64 C62 64 53 60 48.5 63 Z"/><path d="M51.5 57 C42 53 33 56 29 64 C38 64 47 60 51.5 63 Z"/><path d="M48 72 C56 69 64 72 67 79 C59 79 52 75 48 78 Z"/><path d="M52 72 C44 69 36 72 33 79 C41 79 48 75 52 78 Z"/></svg>
+    <svg class="m" viewBox="0 0 100 100" fill="#3A5A40" xmlns="http://www.w3.org/2000/svg"><path d="M48.5 92 C49 70 49 40 50 12 C50.6 30 50.8 60 51.5 92 Z"/><path d="M50 16 C56 14 61 17 63 22 C58 22 53 20 50 22 Z"/><path d="M50 16 C44 14 39 17 37 22 C42 22 47 20 50 22 Z"/><path d="M49.5 28 C57 25 63 28 66 35 C59 35 53 32 49.5 35 Z"/><path d="M50.5 28 C43 25 37 28 34 35 C41 35 47 32 50.5 35 Z"/><path d="M49 42 C58 38 66 41 70 49 C61 49 53 45 49 48 Z"/><path d="M51 42 C42 38 34 41 30 49 C39 49 47 45 51 48 Z"/><path d="M48.5 57 C58 53 67 56 71 64 C62 64 53 60 48.5 63 Z"/><path d="M51.5 57 C42 53 33 56 29 64 C38 64 47 60 51.5 63 Z"/><path d="M48 72 C56 69 64 72 67 79 C59 79 52 75 48 78 Z"/><path d="M52 72 C44 69 36 72 33 79 C41 79 48 75 52 78 Z"/></svg>
+    <span class="label">does the silhouette still read as a frond?</span>
+  </div>
+
+  <!-- lockup -->
+  <div class="lockup">
+    <svg viewBox="0 0 100 100" fill="#3A5A40" xmlns="http://www.w3.org/2000/svg"><path d="M48.5 92 C49 70 49 40 50 12 C50.6 30 50.8 60 51.5 92 Z"/><path d="M50 16 C56 14 61 17 63 22 C58 22 53 20 50 22 Z"/><path d="M50 16 C44 14 39 17 37 22 C42 22 47 20 50 22 Z"/><path d="M49.5 28 C57 25 63 28 66 35 C59 35 53 32 49.5 35 Z"/><path d="M50.5 28 C43 25 37 28 34 35 C41 35 47 32 50.5 35 Z"/><path d="M49 42 C58 38 66 41 70 49 C61 49 53 45 49 48 Z"/><path d="M51 42 C42 38 34 41 30 49 C39 49 47 45 51 48 Z"/><path d="M48.5 57 C58 53 67 56 71 64 C62 64 53 60 48.5 63 Z"/><path d="M51.5 57 C42 53 33 56 29 64 C38 64 47 60 51.5 63 Z"/><path d="M48 72 C56 69 64 72 67 79 C59 79 52 75 48 78 Z"/><path d="M52 72 C44 69 36 72 33 79 C41 79 48 75 52 78 Z"/></svg>
+    <span class="wordmark">alongside</span>
+  </div>
+
+</body>
+</html>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {
-  View, Text, Image, Pressable, StyleSheet, SafeAreaView, ActivityIndicator,
+  View, Text, Image, Pressable, StyleSheet, ActivityIndicator, ScrollView,
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { BlurView } from 'expo-blur';
 import {
@@ -35,7 +36,7 @@ function Dot({ size, resolve }: { size: number; resolve: number }) {
   );
 }
 
-export default function App() {
+function Root() {
   const [fontsLoaded] = useFonts({
     Fraunces_400Regular, Fraunces_500Medium, Fraunces_400Regular_Italic,
     Inter_400Regular, Inter_500Medium, Inter_600SemiBold,
@@ -106,7 +107,7 @@ export default function App() {
     return (
       <SafeAreaView style={s.fill}>
         <StatusBar style="dark" />
-        <View style={[s.pad, { flex: 1 }]}>
+        <ScrollView contentContainerStyle={[s.pad, { flexGrow: 1, paddingTop: 6 }]}>
           <View style={s.partner}>
             <Dot size={46} resolve={resolveForRound(round)} />
             <Text style={[s.cap, { flex: 1, marginLeft: 12 }]}>
@@ -135,7 +136,7 @@ export default function App() {
           </Pressable>
 
           {!!echo && <Text style={s.echo}>{echo}</Text>}
-        </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -202,6 +203,14 @@ export default function App() {
         <Btn label="Meet someone new" onPress={startGame} />
       </View>
     </SafeAreaView>
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <Root />
+    </SafeAreaProvider>
   );
 }
 
