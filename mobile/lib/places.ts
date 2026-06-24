@@ -6,7 +6,7 @@ export type Place = { name: string; kind: string };
 
 const ENDPOINT = 'https://overpass-api.de/api/interpreter';
 
-export async function nearbyPlaces(lat: number, lng: number, radius = 1600): Promise<Place[]> {
+export async function nearbyPlaces(lat: number, lng: number, radius = 3000): Promise<Place[]> {
   const q = `[out:json][timeout:20];(
     node["amenity"~"^(cafe|bar|pub|restaurant|biergarten)$"](around:${radius},${lat},${lng});
     node["leisure"~"^(park|fitness_centre|garden|sports_centre|pitch)$"](around:${radius},${lat},${lng});

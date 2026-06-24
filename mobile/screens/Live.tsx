@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import { nearbyPlaces } from '../lib/places';
+import OsmHeatMap from '../components/OsmHeatMap';
 import { C, F } from '../theme';
 
 type LocState = 'idle' | 'asking' | 'granted' | 'denied' | 'error';
@@ -34,10 +35,10 @@ export default function Live({ onBack }: { onBack: () => void }) {
   const [spot, setSpot] = useState(SPOTS[0]);
   const [dur, setDur] = useState(DURS[1]);
   const [trait, setTrait] = useState<string | null>(null);
-  const [sheet, setSheet] = useState<{ name: string; n: number; ov: number } | null>(null);
   const [loc, setLoc] = useState<LocState>('idle');
   const [area, setArea] = useState<string>('');
   const [spots, setSpots] = useState<string[]>(SPOTS); // curated fallback until real places load
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
 
   async function findMe() {
     setLoc('asking');
@@ -45,6 +46,7 @@ export default function Live({ onBack }: { onBack: () => void }) {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') { setLoc('denied'); return; }
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
+      setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       // reverse-geocode to a coarse, human area name — we never store or show the precise point
       const geo = await Location.reverseGeocodeAsync(pos.coords);
       const g = geo[0];
@@ -140,28 +142,29 @@ export default function Live({ onBack }: { onBack: () => void }) {
       </View>
 
       <View style={s.map}>
-        <Blob left={40} top={60} size={150} />
-        <Blob left={180} top={30} size={110} />
-        <Blob left={170} top={150} size={130} />
-        <View style={s.youRing} />
-        <Pressable style={[s.hot, { left: 150, top: 10, width: 90, height: 90 }]} onPress={() => setSheet({ name: 'Midtown art walk', n: 9, ov: 2 })} />
-        <Pressable style={[s.hot, { left: 160, top: 140, width: 100, height: 100 }]} onPress={() => setSheet({ name: 'Track 7 brewery', n: 6, ov: 1 })} />
+        {coords ? (
+          <OsmHeatMap lat={coords.lat} lng={coords.lng} />
+        ) : (
+          <>
+            <Blob left={40} top={60} size={150} />
+            <Blob left={180} top={30} size={110} />
+            <Blob left={170} top={150} size={130} />
+            <View style={s.youRing} />
+          </>
+        )}
       </View>
 
       <View style={s.sheet}>
-        {!sheet ? (
-          <Text style={[s.sub, { textAlign: 'center' }]}>Tap a warm area — you’ll see how many and what you share, never who or exactly where.</Text>
-        ) : (
-          <>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <Text style={s.sheetTitle}>{sheet.name}</Text>
-              <View style={s.warmTag}><Text style={s.warmTagText}>🔥 warm now</Text></View>
-            </View>
-            <Text style={[s.sub, { marginBottom: 10 }]}>About {sheet.n} people open to meeting here right now{sheet.ov ? ` · ${sheet.ov} share an overlap with you` : ''}.</Text>
-            {sheet.ov > 0 && <Text style={s.sheetWhy}>Someone here is also training for a marathon. We won’t say who — but now you’ve got a way in: “Are you training for a marathon?” beats “hey, you’re cute” every time.</Text>}
-            <Text style={s.fine}>No names. No dots. No exact spot. Just a reason to say hi.</Text>
-          </>
-        )}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <Text style={s.sheetTitle}>Around {spot}</Text>
+          <View style={s.warmTag}><Text style={s.warmTagText}>🔥 warm now</Text></View>
+        </View>
+        <Text style={[s.sub, { marginBottom: 10 }]}>About 7 people open to meeting near here right now · 2 share an overlap with you.</Text>
+        <Text style={s.sheetWhy}>
+          {trait ? `Someone here is also into “${trait}.” ` : 'Someone here is also training for a marathon. '}
+          We won’t say who — but now you’ve got a way in: a shared interest beats “hey, you’re cute” every time.
+        </Text>
+        <Text style={s.fine}>No names. No dots. No exact spot. Just a reason to say hi.</Text>
       </View>
       <Btn label="Go dark" ghost onPress={onBack} />
     </ScrollView>
