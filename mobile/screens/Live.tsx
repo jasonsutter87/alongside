@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
+import { nearbyPlaces } from '../lib/places';
 import { C, F } from '../theme';
 
 type LocState = 'idle' | 'asking' | 'granted' | 'denied' | 'error';
@@ -36,6 +37,7 @@ export default function Live({ onBack }: { onBack: () => void }) {
   const [sheet, setSheet] = useState<{ name: string; n: number; ov: number } | null>(null);
   const [loc, setLoc] = useState<LocState>('idle');
   const [area, setArea] = useState<string>('');
+  const [spots, setSpots] = useState<string[]>(SPOTS); // curated fallback until real places load
 
   async function findMe() {
     setLoc('asking');
@@ -44,10 +46,15 @@ export default function Live({ onBack }: { onBack: () => void }) {
       if (status !== 'granted') { setLoc('denied'); return; }
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low });
       // reverse-geocode to a coarse, human area name — we never store or show the precise point
-      const places = await Location.reverseGeocodeAsync(pos.coords);
-      const p = places[0];
-      const label = p ? [p.city || p.subregion, p.region].filter(Boolean).join(', ') : 'your area';
+      const geo = await Location.reverseGeocodeAsync(pos.coords);
+      const g = geo[0];
+      const label = g ? [g.city || g.subregion, g.region].filter(Boolean).join(', ') : 'your area';
       setArea(label || 'your area');
+      // real PUBLIC places near you, from OpenStreetMap (no key); falls back to curated list on failure
+      try {
+        const nearby = await nearbyPlaces(pos.coords.latitude, pos.coords.longitude);
+        if (nearby.length) { setSpots(nearby.map((n) => n.name)); setSpot(nearby[0].name); }
+      } catch { /* keep curated fallback */ }
       setLoc('granted');
     } catch {
       setLoc('error');
@@ -108,7 +115,7 @@ export default function Live({ onBack }: { onBack: () => void }) {
         {loc === 'granted' && (
           <>
             <Text style={s.label}>📍 PUBLIC PLACES NEAR {area ? area.toUpperCase() : 'YOU'}</Text>
-            <Pills options={SPOTS} value={spot} onPick={setSpot} />
+            <Pills options={spots} value={spot} onPick={setSpot} />
             <Text style={s.fine}>Your exact location never leaves your phone — only the place you pick (public, fuzzed to ¼ mile) is shared.</Text>
           </>
         )}
