@@ -546,6 +546,9 @@ video {
 .visible {
   visibility: visible;
 }
+.invisible {
+  visibility: hidden;
+}
 .absolute {
   position: absolute;
 }
@@ -1149,6 +1152,9 @@ video {
 .text-right {
   text-align: right;
 }
+.text-start {
+  text-align: start;
+}
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1188,6 +1194,9 @@ video {
 }
 .font-semibold {
   font-weight: 600;
+}
+.italic {
+  font-style: italic;
 }
 .text-black {
   --tw-text-opacity: 1;
@@ -1276,6 +1285,13 @@ video {
 .ring-primary {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(13 110 253 / var(--tw-ring-opacity, 1));
+}
+.blur {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .transition {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -1428,11 +1444,5 @@ video {
 
   .md\:text-right {
     text-align: right;
-  }
-}
-@media (min-width: 992px) {
-
-  .lg\:w-1\/2 {
-    width: 50%;
   }
 }
